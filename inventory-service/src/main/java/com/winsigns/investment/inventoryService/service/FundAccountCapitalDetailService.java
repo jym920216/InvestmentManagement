@@ -99,7 +99,7 @@ public class FundAccountCapitalDetailService {
     fundAccountCapitalSerial.setFundAccountCapitalDetail(fundAccountCapitalDetail);
     fundAccountCapitalSerial.setAssignedCash(Math.floor(assignAccountCommand.getAssignedCash()));
     fundAccountCapitalSerial.setAssignedDate(new Date());
-    fundAccountCapitalSerial.operator(fundAccountCapitalDetail, false);
+    fundAccountCapitalSerial.operator();
 
     ECACashPool ecaCashPool =
         ecaCashPoolRepository.findOne(assignAccountCommand.getEcaCashPoolId());
@@ -114,7 +114,7 @@ public class FundAccountCapitalDetailService {
     ecaCashSerial.setAssignedDate(new Date());
     ecaCashSerial.setAssignedCash(-Math.abs(assignAccountCommand.getAssignedCash()));
     ecaCashSerial.setLinkedFASerialId(fundAccountCapitalSerial.getId());
-    ecaCashSerial.operator(ecaCashPool, false);
+    ecaCashSerial.operator();
 
     ecaCashPoolRepository.save(ecaCashPool);
 
@@ -151,7 +151,7 @@ public class FundAccountCapitalDetailService {
     ecaCashSerial.setAssignedDate(new Date());
     ecaCashSerial.setAssignedCash(Math.abs(assignAccountCommand.getAssignedCash()));
     ecaCashSerial.setLinkedFASerialId(fundAccountCapitalSerial.getId());
-    ecaCashSerial.operator(ecaCashPool, false);
+    ecaCashSerial.operator();
 
     return fundAccountCapitalDetail;
   }

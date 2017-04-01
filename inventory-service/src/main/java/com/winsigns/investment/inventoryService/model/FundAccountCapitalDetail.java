@@ -14,7 +14,6 @@ import org.springframework.hateoas.core.Relation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winsigns.investment.framework.measure.MeasureHost;
 import com.winsigns.investment.framework.measure.MeasureHostType;
-import com.winsigns.investment.framework.spring.SpringManager;
 import com.winsigns.investment.inventoryService.measure.FACapitalDetailMHT;
 
 import lombok.Getter;
@@ -34,15 +33,20 @@ public class FundAccountCapitalDetail extends MeasureHost {
   @Setter
   private Long externalCapitalAccountId;
 
-  @Override
-  @JsonIgnore
-  public MeasureHostType getType() {
-    return SpringManager.getApplicationContext().getBean(FACapitalDetailMHT.class);
-  }
-
   @OneToMany(mappedBy = "fundAccountCapitalDetail", cascade = CascadeType.ALL,
       fetch = FetchType.LAZY)
   @JsonIgnore
   List<FundAccountCapitalSerial> fundAccountCapitalSerials =
       new ArrayList<FundAccountCapitalSerial>();
+
+  @Override
+  protected Class<? extends MeasureHostType> defineType() {
+    return FACapitalDetailMHT.class;
+  }
+
+  @Override
+  public MeasureHost parent() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

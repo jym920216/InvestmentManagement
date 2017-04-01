@@ -18,7 +18,6 @@ import org.springframework.hateoas.core.Relation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winsigns.investment.framework.measure.MeasureHost;
 import com.winsigns.investment.framework.measure.MeasureHostType;
-import com.winsigns.investment.framework.spring.SpringManager;
 import com.winsigns.investment.inventoryService.measure.ECACashPoolMHT;
 
 import lombok.Getter;
@@ -50,15 +49,20 @@ public class ECACashPool extends MeasureHost {
   @Setter
   private Double unassignedCapital;
 
-  @Override
-  public MeasureHostType getType() {
-    return SpringManager.getApplicationContext().getBean(ECACashPoolMHT.class);
-  }
-
   @OneToMany(mappedBy = "ecaCashPool", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JsonIgnore
   @Getter
   @Setter
   private List<ECACashSerial> ecaCashSerials = new ArrayList<ECACashSerial>();
+
+  @Override
+  protected Class<? extends MeasureHostType> defineType() {
+    return ECACashPoolMHT.class;
+  }
+
+  @Override
+  public MeasureHost parent() {
+    return null;
+  }
 
 }

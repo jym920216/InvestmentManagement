@@ -1,6 +1,7 @@
 package com.winsigns.investment.inventoryService.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -48,9 +49,20 @@ public class FundAccountCapitalSerial extends OperatorEntity {
   private Long linkedSerialId;
 
   @Override
-  protected void doOperator(MeasureHost measureHost, boolean isFloat) {
+  public boolean isAffectedFloatMeasure() {
+    return true;
+  }
+
+  @Override
+  public boolean isAffectedNomalMeasure() {
+    return true;
+  }
+
+  @Override
+  protected List<MeasureHost> doOperator() {
     SpringManager.getApplicationContext().getBean(FundAccountCapitalSerialRepository.class)
         .save(this);
+    return null;
   }
 
 }

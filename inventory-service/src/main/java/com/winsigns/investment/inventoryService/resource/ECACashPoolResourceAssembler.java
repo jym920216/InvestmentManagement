@@ -3,15 +3,14 @@ package com.winsigns.investment.inventoryService.resource;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
-
+import com.winsigns.investment.framework.measure.resource.MeasureHostResourceAssembler;
 import com.winsigns.investment.inventoryService.command.AllotAccountCommand;
 import com.winsigns.investment.inventoryService.command.TransferAccountCommand;
 import com.winsigns.investment.inventoryService.controller.ECACashPoolController;
 import com.winsigns.investment.inventoryService.model.ECACashPool;
 
 public class ECACashPoolResourceAssembler
-    extends ResourceAssemblerSupport<ECACashPool, ECACashPoolResource> {
+    extends MeasureHostResourceAssembler<ECACashPool, ECACashPoolResource> {
 
   public ECACashPoolResourceAssembler() {
     super(ECACashPoolController.class, ECACashPoolResource.class);

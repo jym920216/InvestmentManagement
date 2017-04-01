@@ -1,19 +1,18 @@
 package com.winsigns.investment.inventoryService.measure;
 
-import static java.util.Arrays.asList;
-
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.winsigns.investment.framework.measure.ICalculateFactor;
+import com.winsigns.investment.framework.measure.IMeasure;
 import com.winsigns.investment.framework.measure.Measure;
+import com.winsigns.investment.framework.measure.MeasureHost;
 import com.winsigns.investment.framework.measure.MeasureHostType;
 import com.winsigns.investment.framework.measure.TradingMeasureValue;
+import com.winsigns.investment.framework.model.OperatorEntity;
 import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
-import com.winsigns.investment.inventoryService.model.FundAccountCapitalSerial;
 import com.winsigns.investment.inventoryService.repository.FundAccountCapitalDetailRepository;
 import com.winsigns.investment.inventoryService.repository.FundAccountCapitalSerialRepository;
 
@@ -35,15 +34,22 @@ public class FundAccountCashMeasure extends Measure {
   }
 
   @Override
-  public List<ICalculateFactor> getCalculateFactors() {
-    return asList(new FundAccountCapitalSerial());
+  public List<Class<? extends OperatorEntity>> getConcernedOperator() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   @Override
-  protected TradingMeasureValue doCalculate(Long measureHostId, boolean isFloat, String version) {
+  public List<IMeasure> getDependentMeasure() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    FundAccountCapitalDetail fundAccountCapitalDetail =
-        fundAccountCapitalDetailRepository.findOne(measureHostId);
+  @Override
+  protected TradingMeasureValue doCalculate(MeasureHost measureHost, boolean isFloat,
+      String version) {
+
+    FundAccountCapitalDetail fundAccountCapitalDetail = (FundAccountCapitalDetail) measureHost;
 
     Double value = fundAccountCapitalSerialRepository
         .findByFundAccountCapitalDetailAndAssignedDate(fundAccountCapitalDetail, new Date());
@@ -51,4 +57,5 @@ public class FundAccountCashMeasure extends Measure {
     return new TradingMeasureValue(fundAccountCapitalDetail, this, isFloat, version, value);
 
   }
+
 }

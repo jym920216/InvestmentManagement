@@ -28,7 +28,7 @@ public class InventoryController {
   public ResponseEntity<?> applyInventory(
       @RequestBody ApplyInventoryCommand applyInventoryCommand) {
 
-    inventoryService.apply(applyInventoryCommand);
+    // inventoryService.apply(applyInventoryCommand);
 
     HttpHeaders responseHeaders = new HttpHeaders();
     return new ResponseEntity<Object>(responseHeaders, HttpStatus.NO_CONTENT);

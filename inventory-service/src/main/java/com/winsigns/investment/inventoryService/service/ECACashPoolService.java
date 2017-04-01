@@ -80,7 +80,7 @@ public class ECACashPoolService {
     ecaCashSerial.setEcaCashPool(ecaCashPool);
     ecaCashSerial.setAssignedDate(new Date());
     ecaCashSerial.setAssignedCash(Math.abs(transferAccountCommand.getChangedCapital()));
-    ecaCashSerial.operator(ecaCashPool, false);
+    ecaCashSerial.operator();
 
     return ecaCashPoolRepository.save(ecaCashPool);
   }
@@ -104,7 +104,7 @@ public class ECACashPoolService {
     ecaCashSerial.setEcaCashPool(ecaCashPool);
     ecaCashSerial.setAssignedDate(new Date());
     ecaCashSerial.setAssignedCash(-Math.abs(transferAccountCommand.getChangedCapital()));
-    ecaCashSerial.operator(ecaCashPool, false);
+    ecaCashSerial.operator();
 
     return ecaCashPoolRepository.save(ecaCashPool);
   }
@@ -130,7 +130,7 @@ public class ECACashPoolService {
     dstECACashSerial.setEcaCashPool(dstEcaCashPool);
     dstECACashSerial.setAssignedDate(new Date());
     dstECACashSerial.setAssignedCash(Math.abs(changedCapital));
-    dstECACashSerial.operator(dstEcaCashPool, false);
+    dstECACashSerial.operator();
 
     ECACashPool srcEcaCashPool = ecaCashPoolRepository.findOne(srcEcaCashPoolId);
     if (srcEcaCashPool == null)
@@ -144,7 +144,7 @@ public class ECACashPoolService {
     srcECACashSerial.setEcaCashPool(srcEcaCashPool);
     srcECACashSerial.setAssignedDate(new Date());
     srcECACashSerial.setAssignedCash(-Math.abs(changedCapital));
-    srcECACashSerial.operator(srcEcaCashPool, false);
+    srcECACashSerial.operator();
 
     return result;
   }
