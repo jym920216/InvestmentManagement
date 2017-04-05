@@ -13,6 +13,12 @@ zuul:
     inventory-service:
       path: /inventory-service/**
       url: http://localhost:10011/
+    invest-service:
+      path: /invest-service/**
+      url: http://localhost:10012/
+    web-gateway:
+      path: /web-gateway/**
+      url: http://localhost:8088/
 
 eureka:
   instance:

@@ -3,8 +3,6 @@ package com.winsigns.investment.investService.controller;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
@@ -34,16 +32,6 @@ public class InstructionController {
   @Autowired
   InstructionService instructionService;
 
-  @GetMapping("/findByDate/{date}")
-  public Resources<InstructionResource> readInstructions(@PathVariable Date date) {
-    Link link = linkTo(InstructionController.class).withSelfRel();
-    Link dateLink =
-        linkTo(methodOn(InstructionController.class).readInstructions(date)).withRel("find");
-    return new Resources<InstructionResource>(
-        new InstructionResourceAssembler().toResources(instructionService.findByCreateDate(date)),
-        link, dateLink);
-  }
-
   @GetMapping
   public Resources<InstructionResource> readInstructions() {
     Link link = linkTo(InstructionController.class).withSelfRel();
@@ -53,7 +41,8 @@ public class InstructionController {
 
   @GetMapping("/{instructionId}")
   public InstructionResource readInstruction(@PathVariable Long instructionId) {
-    return new InstructionResourceAssembler().toResource(instructionService.findOne(instructionId));
+    return new InstructionResourceAssembler()
+        .toResource(instructionService.readInstruction(instructionId));
   }
 
   @PostMapping
