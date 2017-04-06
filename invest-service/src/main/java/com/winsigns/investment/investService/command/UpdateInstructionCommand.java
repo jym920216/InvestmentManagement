@@ -1,5 +1,6 @@
 package com.winsigns.investment.investService.command;
 
+import com.winsigns.investment.investService.constant.CurrencyCode;
 import com.winsigns.investment.investService.constant.InstructionType;
 
 import lombok.Data;
@@ -20,7 +21,7 @@ public class UpdateInstructionCommand {
   private String investDirection;
 
   // 币种
-  private String currency;
+  private CurrencyCode currency;
 
   // 成本价
   private Double costPrice;

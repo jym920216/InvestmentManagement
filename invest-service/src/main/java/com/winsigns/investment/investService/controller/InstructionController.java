@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.winsigns.investment.investService.command.BatchDeleteInstructionCommand;
 import com.winsigns.investment.investService.command.CreateInstructionCommand;
 import com.winsigns.investment.investService.command.UpdateInstructionCommand;
 import com.winsigns.investment.investService.model.Instruction;
@@ -32,19 +33,27 @@ public class InstructionController {
   @Autowired
   InstructionService instructionService;
 
+  /**
+   * 获取指令
+   * 
+   * @return
+   */
   @GetMapping
   public Resources<InstructionResource> readInstructions() {
     Link link = linkTo(InstructionController.class).withSelfRel();
+    Link deleteLink = linkTo(methodOn((InstructionController.class)).deleteInstructions(null))
+        .withRel("batch-delete");
     return new Resources<InstructionResource>(
-        new InstructionResourceAssembler().toResources(instructionService.findAll()), link);
+        new InstructionResourceAssembler().toResources(instructionService.findAll()), link,
+        deleteLink);
   }
 
-  @GetMapping("/{instructionId}")
-  public InstructionResource readInstruction(@PathVariable Long instructionId) {
-    return new InstructionResourceAssembler()
-        .toResource(instructionService.readInstruction(instructionId));
-  }
-
+  /**
+   * 创建一条指令
+   * 
+   * @param instructionCommand
+   * @return
+   */
   @PostMapping
   public ResponseEntity<?> createInstruction(
       @RequestBody CreateInstructionCommand instructionCommand) {
@@ -57,6 +66,37 @@ public class InstructionController {
     return new ResponseEntity<Object>(instruction, responseHeaders, HttpStatus.CREATED);
   }
 
+  /**
+   * 批量删除指令
+   * 
+   * @param command
+   * @return
+   */
+  @DeleteMapping
+  public ResponseEntity<?> deleteInstructions(@RequestBody BatchDeleteInstructionCommand command) {
+    instructionService.deleteInstruction(command.getInstructionIds());
+    return new ResponseEntity<Object>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * 获取一条具体的指令
+   * 
+   * @param instructionId
+   * @return
+   */
+  @GetMapping("/{instructionId}")
+  public InstructionResource readInstruction(@PathVariable Long instructionId) {
+    return new InstructionResourceAssembler()
+        .toResource(instructionService.readInstruction(instructionId));
+  }
+
+  /**
+   * 修改一条指令
+   * 
+   * @param instructionId
+   * @param instructionCommand
+   * @return
+   */
   @PutMapping("/{instructionId}")
   public InstructionResource updateInstruction(@PathVariable Long instructionId,
       @RequestBody UpdateInstructionCommand instructionCommand) {

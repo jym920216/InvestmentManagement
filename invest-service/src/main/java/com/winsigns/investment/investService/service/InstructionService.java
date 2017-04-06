@@ -1,8 +1,8 @@
 package com.winsigns.investment.investService.service;
 
 import java.util.Collection;
-import java.util.Currency;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +101,7 @@ public class InstructionService {
     thisInstruction.setSecurityId(instructionCommand.getSecurityId());
     thisInstruction.setInvestService(instructionCommand.getInvestService());
     thisInstruction.setInvestDirection(instructionCommand.getInvestDirection());
-    thisInstruction.setCurrency(Currency.getInstance(instructionCommand.getCurrency()));
+    thisInstruction.setCurrency(instructionCommand.getCurrency());
     thisInstruction.setCostPrice(instructionCommand.getCostPrice());
     thisInstruction.setVolumeType(instructionCommand.getVolumeType());
     thisInstruction.setQuantity(instructionCommand.getQuantity());
@@ -111,15 +111,23 @@ public class InstructionService {
     return instructionRepository.save(thisInstruction);
   }
 
+  // protected boolean checkOperator(InstructionOperatorType operator, Instruction thisInstruction)
+  // {
+  // if (!thisInstruction.getExecutionStatus().isSupportedOperator(operator)) {
+  //
+  // }
+  // }
+
   protected void check(Instruction thisInstruction) {
     instructionMessageRepository.deleteByInstruction(thisInstruction);
     checkPortfolio(thisInstruction);
+    checkSecurityAndDirection(thisInstruction);
   }
 
   /**
    * 检查指令的投资组合信息
    * 
-   * @param thisInstruction
+   * @param thisInstruction 需要检查的指令
    */
   protected void checkPortfolio(Instruction thisInstruction) {
 
@@ -140,9 +148,48 @@ public class InstructionService {
     }
   }
 
+  /**
+   * 检查指令的投资标的和方向
+   * 
+   * @param thisInstruction
+   */
+  protected void checkSecurityAndDirection(Instruction thisInstruction) {
+
+  }
+
+  /**
+   * 删除指令
+   * <p>
+   * 逻辑删除
+   * 
+   * @param instructionId
+   */
   public void deleteInstruction(Long instructionId) {
 
-    instructionRepository.delete(instructionId);
+    if (instructionId == null) {
+      return;
+    }
+
+    Instruction thisInstruction = instructionRepository.findOne(instructionId);
+
+    if (thisInstruction == null) {
+      return;
+    }
+
+    thisInstruction.setExecutionStatus(InstructionStatus.DELETED);
+    instructionRepository.save(thisInstruction);
+  }
+
+  /**
+   * 批量删除指令
+   * 
+   * @param instructionIds
+   */
+  @Transactional
+  public void deleteInstruction(List<Long> instructionIds) {
+    for (Long id : instructionIds) {
+      deleteInstruction(id);
+    }
   }
 
   public Collection<Instruction> findByCreateDate(Date createDate) {

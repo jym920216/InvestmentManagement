@@ -9,7 +9,11 @@ public class PortfolioResource extends HALResponse<Portfolio> {
 
   public PortfolioResource(Portfolio portfolio) {
     super(portfolio);
-    this.investManagerId = portfolio.getFundAccount().getInvestManager().getId();
+    if (portfolio.getFundAccount().getInvestManager() != null) {
+      this.investManagerId = portfolio.getFundAccount().getInvestManager().getId();
+    } else {
+      this.investManagerId = null;
+    }
   }
 
 }

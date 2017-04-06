@@ -54,11 +54,11 @@ public class InvestServiceManager {
    * 
    * @return 返回服务名和服务支持的方向
    */
-  public Map<String, Enum<?>[]> getServicesInfo() {
-    Map<String, Enum<?>[]> serviceDetails = new HashMap<String, Enum<?>[]>();
+  public Map<IInvestService, Enum<?>[]> getServicesInfo() {
+    Map<IInvestService, Enum<?>[]> serviceDetails = new HashMap<IInvestService, Enum<?>[]>();
 
     for (IInvestService service : services) {
-      serviceDetails.put(service.getName(), service.getDirection());
+      serviceDetails.put(service, service.getDirection());
     }
     return serviceDetails;
   }

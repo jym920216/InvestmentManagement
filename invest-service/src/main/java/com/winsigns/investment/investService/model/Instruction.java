@@ -1,7 +1,6 @@
 package com.winsigns.investment.investService.model;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +17,7 @@ import org.springframework.hateoas.core.Relation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winsigns.investment.framework.model.AbstractEntity;
+import com.winsigns.investment.investService.constant.CurrencyCode;
 import com.winsigns.investment.investService.constant.InstructionStatus;
 import com.winsigns.investment.investService.constant.InstructionType;
 
@@ -56,7 +56,8 @@ public class Instruction extends AbstractEntity {
   // 币种
   @Getter
   @Setter
-  private Currency currency;
+  @Enumerated(EnumType.STRING)
+  private CurrencyCode currency;
 
   // 成本价
   @Getter

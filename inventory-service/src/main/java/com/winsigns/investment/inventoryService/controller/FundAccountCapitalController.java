@@ -82,7 +82,7 @@ public class FundAccountCapitalController {
     return fundAccountCapitalResource;
   }
 
-  @PutMapping("/{faCapitalId}/set-investment-limit")
+  @PutMapping("/{faCapitalId}/investment-limit")
   public FundAccountCapitalResource setInvestmentLimit(@PathVariable Long faCapitalId,
       @RequestBody SetInvestmentLimitCommand setInvestmentLimitCommand) {
     FundAccountCapital fundAccountCapital =

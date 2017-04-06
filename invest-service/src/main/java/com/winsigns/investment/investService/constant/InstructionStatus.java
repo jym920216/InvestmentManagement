@@ -71,6 +71,15 @@ public enum InstructionStatus {
     return supportOperatorTypes.get(this);
   }
 
+  public boolean isSupportedOperator(InstructionOperatorType thisType) {
+    for (InstructionOperatorType type : getSupportedOperator()) {
+      if (type.equals(thisType)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * 国际化
    * 
