@@ -15,7 +15,6 @@ services:
   kafka:
     image: spotify/kafka
     container_name: kafka
-    mem_limit: 512M
     ports:
       - 9092:9092
       - 2181:2181
