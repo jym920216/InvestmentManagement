@@ -1,7 +1,10 @@
 package com.winsigns.investment.investService.controller;
 
+import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.core.Relation;
@@ -25,7 +28,8 @@ import com.winsigns.investment.investService.resource.InstructionResourceAssembl
 import com.winsigns.investment.investService.service.InstructionService;
 
 @RestController
-@RequestMapping("/instruction-baskets")
+@RequestMapping(path = "/instruction-baskets",
+    produces = {HAL_JSON_VALUE, APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
 public class InstructionBasketController {
 
   @Autowired
