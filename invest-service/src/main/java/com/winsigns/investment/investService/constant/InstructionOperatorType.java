@@ -11,7 +11,10 @@ public enum InstructionOperatorType {
   COMMIT,
 
   // 撤回
-  RECALL;
+  RECALL,
+
+  // 删除
+  DELETE;
 
   /**
    * 国际化

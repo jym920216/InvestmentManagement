@@ -8,7 +8,7 @@ import com.winsigns.investment.investService.service.common.AbstractInvestServic
 @Service
 public class StockInvestService extends AbstractInvestService {
 
-  public enum StockDirection {
+  public enum StockInvestType {
 
     BUY,
 
@@ -20,8 +20,8 @@ public class StockInvestService extends AbstractInvestService {
   }
 
   @Override
-  public StockDirection[] getDirection() {
-    return StockDirection.values();
+  public StockInvestType[] getInstructionType() {
+    return StockInvestType.values();
   }
 
 }

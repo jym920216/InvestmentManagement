@@ -6,9 +6,9 @@ import com.winsigns.investment.framework.i18n.i18nHelper;
 import com.winsigns.investment.investService.service.common.AbstractInvestService;
 
 @Service
-public class FuturenvestService extends AbstractInvestService {
+public class FutureInvestService extends AbstractInvestService {
 
-  public enum FutureDirection {
+  public enum FutureInvestType {
 
     BUY,
 
@@ -20,8 +20,9 @@ public class FuturenvestService extends AbstractInvestService {
   }
 
   @Override
-  public FutureDirection[] getDirection() {
-    return FutureDirection.values();
+  public FutureInvestType[] getInstructionType() {
+    return FutureInvestType.values();
   }
+
 
 }

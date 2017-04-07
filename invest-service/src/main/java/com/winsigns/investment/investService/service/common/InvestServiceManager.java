@@ -58,7 +58,7 @@ public class InvestServiceManager {
     Map<IInvestService, Enum<?>[]> serviceDetails = new HashMap<IInvestService, Enum<?>[]>();
 
     for (IInvestService service : services) {
-      serviceDetails.put(service, service.getDirection());
+      serviceDetails.put(service, service.getInstructionType());
     }
     return serviceDetails;
   }

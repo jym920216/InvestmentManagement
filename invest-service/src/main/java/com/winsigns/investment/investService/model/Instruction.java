@@ -1,14 +1,20 @@
 package com.winsigns.investment.investService.model;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,6 +38,9 @@ import lombok.Setter;
  */
 @Entity
 @Relation(value = "instruction", collectionRelation = "instructions")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn
+@DiscriminatorValue("instruction")
 public class Instruction extends AbstractEntity {
   // 投资组合
   @Getter
@@ -90,17 +99,23 @@ public class Instruction extends AbstractEntity {
   @Setter
   private InstructionStatus executionStatus;
 
-  // 创建日期
+  // 创建时间
   @Getter
   @Setter
-  @Temporal(TemporalType.DATE)
-  private Date createDate = new Date();
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date createTime = new Timestamp(System.currentTimeMillis());
 
   @OneToMany(mappedBy = "instruction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JsonIgnore
   @Setter
   @Getter
   private List<InstructionMessage> messages = new ArrayList<InstructionMessage>();
+
+  @ManyToOne
+  @JsonIgnore
+  @Getter
+  @Setter
+  private InstructionBasket instructionBasket;
 
   public void addInstructionMessage(InstructionMessage message) {
     this.messages.add(message);

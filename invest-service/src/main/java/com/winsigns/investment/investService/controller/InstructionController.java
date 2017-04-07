@@ -3,6 +3,8 @@ package com.winsigns.investment.investService.controller;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
@@ -43,9 +45,9 @@ public class InstructionController {
     Link link = linkTo(InstructionController.class).withSelfRel();
     Link deleteLink = linkTo(methodOn((InstructionController.class)).deleteInstructions(null))
         .withRel("batch-delete");
+    Collection<Instruction> instructions = instructionService.findAll();
     return new Resources<InstructionResource>(
-        new InstructionResourceAssembler().toResources(instructionService.findAll()), link,
-        deleteLink);
+        new InstructionResourceAssembler().toResources(instructions), link, deleteLink);
   }
 
   /**

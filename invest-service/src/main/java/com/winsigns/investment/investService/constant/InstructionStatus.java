@@ -2,6 +2,7 @@ package com.winsigns.investment.investService.constant;
 
 import static java.util.Arrays.asList;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,10 +46,11 @@ public enum InstructionStatus {
   private static HashMap<InstructionStatus, List<InstructionOperatorType>> supportOperatorTypes =
       new HashMap<InstructionStatus, List<InstructionOperatorType>>();
   static {
-    supportOperatorTypes.put(DRAFT,
-        asList(InstructionOperatorType.MODIFY, InstructionOperatorType.COMMIT));
+    supportOperatorTypes.put(DRAFT, asList(InstructionOperatorType.MODIFY,
+        InstructionOperatorType.DELETE, InstructionOperatorType.COMMIT));
     supportOperatorTypes.put(COMMITING,
         asList(InstructionOperatorType.MODIFY, InstructionOperatorType.RECALL));
+    supportOperatorTypes.put(DELETED, new ArrayList<InstructionOperatorType>());
   }
 
   /**

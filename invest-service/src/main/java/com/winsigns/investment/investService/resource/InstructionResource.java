@@ -17,25 +17,31 @@ import com.winsigns.investment.investService.service.common.InvestServiceManager
 
 import lombok.Getter;
 
+/**
+ * 指令的资源
+ * 
+ * @author yimingjin
+ *
+ */
 public class InstructionResource extends HALResponse<Instruction> {
 
   @Getter
-  final String executionStatusLabel;
+  protected final String executionStatusLabel;
 
   @Getter
-  final List<Item> supportedOperator = new ArrayList<Item>();
+  protected final List<Item> supportedOperator = new ArrayList<Item>();
 
   @Getter
-  final List<Item> supprotedInvestService = new ArrayList<Item>();
+  protected final List<Item> supprotedInvestService = new ArrayList<Item>();
 
   @Getter
-  final List<Item> supportedCurrencies = new ArrayList<Item>();
+  protected final List<Item> supportedCurrencies = new ArrayList<Item>();
 
   @Getter
-  final HashMap<String, String> errors = new HashMap<String, String>();
+  protected final HashMap<String, String> errors = new HashMap<String, String>();
 
   @Getter
-  final HashMap<String, String> warnings = new HashMap<String, String>();
+  protected final HashMap<String, String> warnings = new HashMap<String, String>();
 
   public InstructionResource(Instruction instruction) {
     super(instruction);
