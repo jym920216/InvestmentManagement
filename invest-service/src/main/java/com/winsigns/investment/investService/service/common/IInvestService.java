@@ -1,5 +1,7 @@
 package com.winsigns.investment.investService.service.common;
 
+import com.winsigns.investment.investService.model.Instruction;
+
 /**
  * 投资服务的接口
  * 
@@ -25,4 +27,11 @@ public interface IInvestService {
    * @return 指令类型
    */
   Enum<?>[] getInstructionType();
+
+  /**
+   * 提交指令
+   * 
+   * @param instruction
+   */
+  void commitInstruction(Instruction instruction);
 }

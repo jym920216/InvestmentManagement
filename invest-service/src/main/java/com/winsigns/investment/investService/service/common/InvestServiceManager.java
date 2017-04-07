@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.util.Assert;
+
+import com.winsigns.investment.investService.model.Instruction;
+
 /**
  * 投资服务的管理者
  * 
@@ -61,5 +65,13 @@ public class InvestServiceManager {
       serviceDetails.put(service, service.getInstructionType());
     }
     return serviceDetails;
+  }
+
+  public void commitInstruction(Instruction instruction) {
+
+    IInvestService service = this.getService(instruction.getInvestService());
+    Assert.notNull(service);
+    service.commitInstruction(instruction);
+
   }
 }

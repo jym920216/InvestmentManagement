@@ -14,7 +14,6 @@ import com.winsigns.investment.investService.constant.InstructionStatus;
 import com.winsigns.investment.investService.controller.InstructionBasketController;
 import com.winsigns.investment.investService.controller.InstructionController;
 import com.winsigns.investment.investService.model.Instruction;
-import com.winsigns.investment.investService.model.InstructionBasket;
 
 public class InstructionResourceAssembler
     implements ResourceAssembler<Instruction, InstructionResource> {
@@ -28,8 +27,7 @@ public class InstructionResourceAssembler
   @Override
   public InstructionResource toResource(Instruction instruction) {
     InstructionResource resource = createResourceWithId(instruction.getId(), instruction);
-    if (instruction.getInstructionBasket() == null
-        && instruction.getExecutionStatus() == InstructionStatus.DRAFT) {
+    if (!instruction.isOfBasket() && instruction.getExecutionStatus() == InstructionStatus.DRAFT) {
       resource
           .add(linkTo(methodOn(InstructionController.class).commitInstruction(instruction.getId()))
               .withRel("commit"));
@@ -67,7 +65,7 @@ public class InstructionResourceAssembler
     Assert.notNull(id);
 
     InstructionResource instance = instantiateResource(entity);
-    if (entity instanceof InstructionBasket) {
+    if (entity.isBasket()) {
       instance.add(linkTo(basketControllerClass, parameters).slash(id).withSelfRel());
     } else {
       instance.add(linkTo(instructionControllerClass, parameters).slash(id).withSelfRel());

@@ -8,6 +8,7 @@ import org.springframework.hateoas.core.Relation;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.winsigns.investment.investService.command.CreateInstructionBasketCommand;
+import com.winsigns.investment.investService.command.CreateInstructionCommand;
 import com.winsigns.investment.investService.model.Instruction;
 import com.winsigns.investment.investService.model.InstructionBasket;
 import com.winsigns.investment.investService.resource.InstructionResource;
@@ -64,4 +66,34 @@ public class InstructionBasketController {
     return resource;
   }
 
+  /**
+   * 在篮子下创建一条指令
+   * 
+   * @param instructionCommand
+   * @return
+   */
+  @PostMapping("/{instructionBasketId}")
+  public ResponseEntity<?> createInstruction(@PathVariable Long instructionBasketId,
+      @RequestBody CreateInstructionCommand instructionCommand) {
+
+    Instruction instruction =
+        instructionService.addInstructionOfBasket(instructionBasketId, instructionCommand);
+
+    HttpHeaders responseHeaders = new HttpHeaders();
+    responseHeaders.setLocation(
+        linkTo(methodOn(InstructionController.class).readInstruction(instruction.getId())).toUri());
+    return new ResponseEntity<Object>(instruction, responseHeaders, HttpStatus.CREATED);
+  }
+
+  /**
+   * 删除一个篮子以及其下所有指令
+   * 
+   * @param instructionBasketId
+   * @return
+   */
+  @DeleteMapping("/{instructionBasketId}")
+  public ResponseEntity<?> deleteInstruction(@PathVariable Long instructionBasketId) {
+    instructionService.deleteInstruction(instructionBasketId);
+    return new ResponseEntity<Object>(HttpStatus.NO_CONTENT);
+  }
 }

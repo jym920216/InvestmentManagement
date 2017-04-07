@@ -1,6 +1,7 @@
 package com.winsigns.investment.investService.service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import com.winsigns.investment.investService.model.InstructionMessage;
 import com.winsigns.investment.investService.repository.InstructionBasketRepository;
 import com.winsigns.investment.investService.repository.InstructionMessageRepository;
 import com.winsigns.investment.investService.repository.InstructionRepository;
+import com.winsigns.investment.investService.service.common.InvestServiceManager;
 
 /**
  * 指令服务
@@ -65,15 +67,11 @@ public class InstructionService {
    */
   public Instruction readInstruction(Long instructionId) {
 
-    if (instructionId == null) {
-      return null;
-    }
+    Assert.notNull(instructionId);
 
     Instruction thisInstruction = instructionRepository.findOne(instructionId);
 
-    if (thisInstruction == null) {
-      return null;
-    }
+    Assert.notNull(thisInstruction);
 
     return thisInstruction;
   }
@@ -110,9 +108,7 @@ public class InstructionService {
       UpdateInstructionCommand instructionCommand) {
     Instruction thisInstruction = instructionRepository.findOne(instructionId);
 
-    if (thisInstruction == null) {
-      return null;
-    }
+    Assert.notNull(thisInstruction);
 
     if (!thisInstruction.getExecutionStatus().isSupportedOperator(InstructionOperatorType.MODIFY)) {
       return null;
@@ -178,24 +174,37 @@ public class InstructionService {
    * 
    * @param instructionId
    */
+  @Transactional
   public void deleteInstruction(Long instructionId) {
 
-    if (instructionId == null) {
-      return;
-    }
+    Assert.notNull(instructionId);
 
     Instruction thisInstruction = instructionRepository.findOne(instructionId);
 
-    if (thisInstruction == null) {
-      return;
-    }
+    Assert.notNull(thisInstruction);
 
-    if (!thisInstruction.getExecutionStatus().isSupportedOperator(InstructionOperatorType.DELETE)) {
-      return;
-    }
+    if (!thisInstruction.isBasket()) {
+      if (!thisInstruction.getExecutionStatus()
+          .isSupportedOperator(InstructionOperatorType.DELETE)) {
+        return;
+      }
 
-    thisInstruction.setExecutionStatus(InstructionStatus.DELETED);
-    instructionRepository.save(thisInstruction);
+      thisInstruction.setExecutionStatus(InstructionStatus.DELETED);
+      instructionRepository.save(thisInstruction);
+    } else {
+      InstructionBasket thisBasket = basketRepository.findOne(instructionId);
+      Assert.notNull(thisBasket);
+
+      if (!thisBasket.getExecutionStatus().isSupportedOperator(InstructionOperatorType.DELETE)) {
+        return;
+      }
+
+      for (Instruction instruction : thisBasket.getInstructions()) {
+        instruction.setExecutionStatus(InstructionStatus.DELETED);
+      }
+      thisBasket.setExecutionStatus(InstructionStatus.DELETED);
+      basketRepository.save(thisBasket);
+    }
   }
 
   /**
@@ -210,25 +219,69 @@ public class InstructionService {
     }
   }
 
-  public Collection<Instruction> findAll() {
-    return instructionRepository.findByInstructionBasketIsNull(sortByCreateTime());
+  /**
+   * 根据条件查找正常状态的指令
+   * 
+   * @param investManagerId
+   * @return
+   */
+  public Collection<Instruction> findNormalInstructionByCondition(Long investManagerId,
+      Date beginDate, Date endDate) {
+
+    Assert.notNull(investManagerId);
+    if (beginDate == null) {
+      beginDate = new Date();
+    }
+    if (endDate == null) {
+      endDate = new Date();
+    }
+    return instructionRepository
+        .findByInvestManagerIdAndCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNull(
+            investManagerId, beginDate, endDate, InstructionStatus.DELETED, sortByCreateTime());
   }
 
+  /**
+   * 根据条件查找已删除的指令
+   * 
+   * @param investManagerId
+   * @return
+   */
+  public Collection<Instruction> findDeletedInstructionByCondition(Long investManagerId) {
+    return instructionRepository.findByInvestManagerIdAndExecutionStatusAndInstructionBasketIsNull(
+        investManagerId, InstructionStatus.DELETED, sortByCreateTime());
+  }
+
+  /**
+   * 默认的排序方式
+   * 
+   * @return
+   */
   private Sort sortByCreateTime() {
     return new Sort(Sort.Direction.DESC, "createTime");
   }
 
+  /**
+   * 提交指令
+   * 
+   * @param instructionId
+   * @return
+   */
+  @Transactional
   public boolean commitInstruction(Long instructionId) {
 
-    Instruction instruction = instructionRepository.findOne(instructionId);
+    Instruction thisInstruction = instructionRepository.findOne(instructionId);
 
-    if (instruction.getExecutionStatus() != InstructionStatus.DRAFT)
+    if (!thisInstruction.getExecutionStatus().isSupportedOperator(InstructionOperatorType.COMMIT)) {
       return false;
+    }
 
-    instruction.setExecutionStatus(InstructionStatus.COMMITING);
-    instructionRepository.save(instruction);
-
-    // TODO 向kafka 发送异步请求
+    if (!thisInstruction.isBasket()) {
+      InvestServiceManager.getInstance().commitInstruction(thisInstruction);
+      thisInstruction.setExecutionStatus(InstructionStatus.COMMITING);
+      instructionRepository.save(thisInstruction);
+    } else {
+      // TODO 篮子的提交待处理
+    }
 
     return true;
   }
@@ -241,15 +294,11 @@ public class InstructionService {
    */
   public InstructionBasket readInstructionBasket(Long instructionBasketId) {
 
-    if (instructionBasketId == null) {
-      return null;
-    }
+    Assert.notNull(instructionBasketId);
 
     InstructionBasket thisBasket = basketRepository.findOne(instructionBasketId);
 
-    if (thisBasket == null) {
-      return null;
-    }
+    Assert.notNull(thisBasket);
 
     return thisBasket;
   }
@@ -278,11 +327,38 @@ public class InstructionService {
       newBasket.setBasketName(i18nHelper.i18n(DEFAULT_BASKET_NAME));
     }
 
-    Instruction newInstruction = this.addInstruction(command);
-    newBasket.addInstruction(newInstruction);
-
-    newBasket = basketRepository.save(newBasket);
-    return newBasket;
+    return addInstructionOfBasket(newBasket, command);
   }
 
+  /**
+   * 在篮子下增加一条指令
+   * 
+   * @param thisBasket
+   * @param command
+   * @return
+   */
+  protected InstructionBasket addInstructionOfBasket(InstructionBasket thisBasket,
+      CreateInstructionCommand command) {
+    Assert.notNull(thisBasket);
+    Instruction newInstruction = this.addInstruction(command);
+    thisBasket.addInstruction(newInstruction);
+    return basketRepository.save(thisBasket);
+  }
+
+  /**
+   * 在篮子下增加一条指令
+   * 
+   * @param basketId 篮子号
+   * @param instructionCommand
+   * @return 返回这个篮子
+   */
+  public InstructionBasket addInstructionOfBasket(Long basketId,
+      CreateInstructionCommand instructionCommand) {
+
+    Assert.notNull(basketId);
+
+    InstructionBasket thisBasket = basketRepository.findOne(basketId);
+
+    return addInstructionOfBasket(thisBasket, instructionCommand);
+  }
 }

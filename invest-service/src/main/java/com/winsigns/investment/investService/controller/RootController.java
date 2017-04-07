@@ -26,8 +26,9 @@ public class RootController {
       produces = {HAL_JSON_VALUE, APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
   public HttpEntity<HALResponse<String>> root() {
     HALResponse<String> halResponse = new HALResponse<String>("");
-    halResponse.add(linkTo(methodOn((InstructionController.class)).readInstructions())
-        .withRel(Instruction.class.getAnnotation(Relation.class).collectionRelation()));
+    halResponse
+        .add(linkTo(methodOn((InstructionController.class)).readInstructions(null, null, null))
+            .withRel(Instruction.class.getAnnotation(Relation.class).collectionRelation()));
     return new ResponseEntity<>(halResponse, HttpStatus.OK);
   }
 }

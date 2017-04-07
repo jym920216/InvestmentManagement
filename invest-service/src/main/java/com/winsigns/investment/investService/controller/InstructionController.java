@@ -4,8 +4,10 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.winsigns.investment.investService.command.BatchDeleteInstructionCommand;
@@ -41,11 +44,14 @@ public class InstructionController {
    * @return
    */
   @GetMapping
-  public Resources<InstructionResource> readInstructions() {
+  public Resources<InstructionResource> readInstructions(@RequestParam Long investManagerId,
+      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date beginDate,
+      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date endDate) {
     Link link = linkTo(InstructionController.class).withSelfRel();
     Link deleteLink = linkTo(methodOn((InstructionController.class)).deleteInstructions(null))
         .withRel("batch-delete");
-    Collection<Instruction> instructions = instructionService.findAll();
+    Collection<Instruction> instructions =
+        instructionService.findNormalInstructionByCondition(investManagerId, beginDate, endDate);
     return new Resources<InstructionResource>(
         new InstructionResourceAssembler().toResources(instructions), link, deleteLink);
   }
@@ -106,6 +112,12 @@ public class InstructionController {
         .toResource(instructionService.updateInstruction(instructionId, instructionCommand));
   }
 
+  /**
+   * 删除一条指令
+   * 
+   * @param instructionId
+   * @return
+   */
   @DeleteMapping("/{instructionId}")
   public ResponseEntity<?> deleteInstruction(@PathVariable Long instructionId) {
     instructionService.deleteInstruction(instructionId);

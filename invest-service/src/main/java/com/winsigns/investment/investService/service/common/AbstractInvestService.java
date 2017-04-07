@@ -5,6 +5,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import com.winsigns.investment.framework.i18n.i18nHelper;
+import com.winsigns.investment.investService.model.Instruction;
 
 /**
  * 实现一种简单的投资服务的抽象类
@@ -30,4 +31,8 @@ public abstract class AbstractInvestService implements IInvestService {
     InvestServiceManager.getInstance().register(this);
   }
 
+  @Override
+  public void commitInstruction(Instruction instruction) {
+
+  }
 }

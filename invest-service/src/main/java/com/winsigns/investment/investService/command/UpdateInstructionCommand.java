@@ -30,7 +30,7 @@ public class UpdateInstructionCommand {
   private InstructionType volumeType;
 
   // 指令数量
-  private Double quantity;
+  private Long quantity;
 
   // 指令金额
   private Double amount;

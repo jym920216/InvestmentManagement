@@ -82,7 +82,7 @@ public class Instruction extends AbstractEntity {
   // 指令数量
   @Getter
   @Setter
-  private Double quantity;
+  private Long quantity;
 
   // 指令金额
   @Getter
@@ -98,6 +98,12 @@ public class Instruction extends AbstractEntity {
   @Getter
   @Setter
   private InstructionStatus executionStatus;
+
+  // 创建时间
+  @Getter
+  @Setter
+  @Temporal(TemporalType.DATE)
+  private Date createDate = new Date();
 
   // 创建时间
   @Getter
@@ -120,4 +126,31 @@ public class Instruction extends AbstractEntity {
   public void addInstructionMessage(InstructionMessage message) {
     this.messages.add(message);
   }
+
+  /**
+   * 判断这条指令是否为篮子指令
+   * 
+   * @return
+   */
+  public boolean isBasket() {
+    if (this instanceof InstructionBasket) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * 判断是否为篮子下的指令
+   * 
+   * @return
+   */
+  public boolean isOfBasket() {
+    if (this.getInstructionBasket() != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 }
