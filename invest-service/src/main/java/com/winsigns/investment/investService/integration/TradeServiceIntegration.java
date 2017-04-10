@@ -1,11 +1,16 @@
 package com.winsigns.investment.investService.integration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 
-import com.jayway.jsonpath.JsonPath;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.winsigns.investment.framework.integration.AbstractIntegration;
+import com.winsigns.investment.investService.command.SendInstructionCommand;
+import com.winsigns.investment.investService.model.Instruction;
 
 /**
  * 与trade-service的交互
@@ -16,21 +21,33 @@ import com.winsigns.investment.framework.integration.AbstractIntegration;
 @Component
 public class TradeServiceIntegration extends AbstractIntegration {
 
-  private String portfolioURL = "/portfolios/%d";
+  private Logger log = LoggerFactory.getLogger(TradeServiceIntegration.class);
+
+  private String tradeURL = "/trades";
 
   @Override
   public String getIntegrationName() {
     return "trade-service";
   }
 
-  @HystrixCommand(fallbackMethod = "defaultPortfolioInvestManager")
-  public Long getPortfolioInvestManager(Long portfolioId) {
-    ResponseEntity<String> resultStr = restTemplate.getForEntity(
-        this.getIntegrationURI() + String.format(portfolioURL, portfolioId), String.class);
-    return JsonPath.read(resultStr.getBody(), "$.investManagerId");
-  }
+  public boolean commitInstruction(Instruction instruction) {
 
-  public Long defaultPortfolioInvestManager(Long portfolioId) {
-    return null;
+    SendInstructionCommand command = new SendInstructionCommand();
+
+    HttpEntity<SendInstructionCommand> requestEntity =
+        new HttpEntity<SendInstructionCommand>(command);
+
+    try {
+      ResponseEntity<String> resultStr = restTemplate
+          .postForEntity(this.getIntegrationURI() + tradeURL, requestEntity, String.class);
+
+      if (resultStr.getStatusCode().compareTo(HttpStatus.OK) == 0) {
+        return true;
+      }
+      return false;
+    } catch (RestClientException e) {
+      log.warn(e.getMessage());
+      return false;
+    }
   }
 }

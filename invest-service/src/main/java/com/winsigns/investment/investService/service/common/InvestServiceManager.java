@@ -62,16 +62,16 @@ public class InvestServiceManager {
     Map<IInvestService, Enum<?>[]> serviceDetails = new HashMap<IInvestService, Enum<?>[]>();
 
     for (IInvestService service : services) {
-      serviceDetails.put(service, service.getInstructionType());
+      serviceDetails.put(service, service.getInvestType());
     }
     return serviceDetails;
   }
 
-  public void commitInstruction(Instruction instruction) {
+  public boolean commitInstruction(Instruction instruction) {
 
     IInvestService service = this.getService(instruction.getInvestService());
     Assert.notNull(service);
-    service.commitInstruction(instruction);
+    return service.commitInstruction(instruction);
 
   }
 }

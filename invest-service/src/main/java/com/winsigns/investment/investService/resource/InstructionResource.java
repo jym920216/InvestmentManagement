@@ -26,7 +26,16 @@ import lombok.Getter;
 public class InstructionResource extends HALResponse<Instruction> {
 
   @Getter
+  protected final String investServiceLabel;
+
+  @Getter
+  protected final String investTypeLabel;
+
+  @Getter
   protected final String executionStatusLabel;
+
+  @Getter
+  protected final String currencyLabel;
 
   @Getter
   protected final List<Item> supportedOperator = new ArrayList<Item>();
@@ -64,8 +73,22 @@ public class InstructionResource extends HALResponse<Instruction> {
 
       }
     }
-    // 1.状态的国际化
+    // 1.字段的国际化
     this.executionStatusLabel = instruction.getExecutionStatus().i18n();
+    IInvestService service =
+        InvestServiceManager.getInstance().getService(instruction.getInvestService());
+    if (service != null) {
+      this.investServiceLabel = service.getSimpleName();
+      this.investTypeLabel = i18nHelper.i18n(service.getInvestType(instruction.getInvestType()));
+    } else {
+      this.investServiceLabel = null;
+      this.investTypeLabel = null;
+    }
+    if (instruction.getCurrency() != null) {
+      this.currencyLabel = instruction.getCurrency().i18n();
+    } else {
+      this.currencyLabel = null;
+    }
     // 2.状态支持的操作
     for (InstructionOperatorType type : instruction.getExecutionStatus().getSupportedOperator()) {
       this.supportedOperator.add(new Item(type.name(), type.i18n()));

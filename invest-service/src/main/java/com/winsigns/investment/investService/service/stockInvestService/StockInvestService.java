@@ -20,7 +20,7 @@ public class StockInvestService extends AbstractInvestService {
   }
 
   @Override
-  public StockInvestType[] getInstructionType() {
+  public StockInvestType[] getInvestType() {
     return StockInvestType.values();
   }
 

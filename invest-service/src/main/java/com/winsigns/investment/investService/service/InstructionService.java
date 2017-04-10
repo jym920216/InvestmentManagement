@@ -119,7 +119,7 @@ public class InstructionService {
     thisInstruction.setPortfolioId(instructionCommand.getPortfolioId());
     thisInstruction.setSecurityId(instructionCommand.getSecurityId());
     thisInstruction.setInvestService(instructionCommand.getInvestService());
-    thisInstruction.setInvestDirection(instructionCommand.getInvestDirection());
+    thisInstruction.setInvestType(instructionCommand.getInvestType());
     thisInstruction.setCurrency(instructionCommand.getCurrency());
     thisInstruction.setCostPrice(instructionCommand.getCostPrice());
     thisInstruction.setVolumeType(instructionCommand.getVolumeType());
@@ -278,9 +278,15 @@ public class InstructionService {
     }
 
     if (!thisInstruction.isBasket()) {
-      InvestServiceManager.getInstance().commitInstruction(thisInstruction);
-      thisInstruction.setExecutionStatus(InstructionStatus.COMMITING);
-      instructionRepository.save(thisInstruction);
+      if (InvestServiceManager.getInstance().commitInstruction(thisInstruction)) {
+        thisInstruction.setExecutionStatus(InstructionStatus.COMMITING);
+        instructionRepository.save(thisInstruction);
+      } else {
+        thisInstruction
+            .addInstructionMessage(new InstructionMessage(thisInstruction, "executionStatus",
+                InstructionMessageType.ERROR, InstructionMessageCode.INSTRUCTION_COMMIT_FAIL));
+        instructionRepository.save(thisInstruction);
+      }
     } else {
       // TODO 篮子的提交待处理
     }

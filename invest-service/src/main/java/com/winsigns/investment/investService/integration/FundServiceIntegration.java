@@ -31,7 +31,6 @@ public class FundServiceIntegration extends AbstractIntegration {
 
   @HystrixCommand(fallbackMethod = "defaultPortfolioInvestManager")
   public Long getPortfolioInvestManager(Long portfolioId) {
-    System.out.println(this.getIntegrationURI() + String.format(portfolioURL, portfolioId));
     try {
       ResponseEntity<String> resultStr = restTemplate.getForEntity(
           this.getIntegrationURI() + String.format(portfolioURL, portfolioId), String.class);

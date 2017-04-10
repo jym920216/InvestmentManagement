@@ -1,59 +1,86 @@
-package com.winsigns.investment.tradeService.service;
+package com.winsigns.investment.tradeService.service.common;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
-import com.winsigns.investment.tradeService.command.CommitInstructionCommand;
+import com.winsigns.investment.tradeService.command.SendInstructionCommand;
 
 @Service
 public class TradeServiceManager {
 
-  @Autowired
-  SSEAStockTradeService sseAStockTradeService;
+  private List<ITradeService> services;
 
-  public void acceptInstruction(CommitInstructionCommand commitInstructionCmd) {
+  private static TradeServiceManager instance = new TradeServiceManager();
 
-    List<TradeServiceBase> services =
-        getAvailableTradeServices(commitInstructionCmd.getInvestSvc());
+  public static TradeServiceManager getInstance() {
+    return instance;
+  }
+
+  private TradeServiceManager() {
+    services = new ArrayList<ITradeService>();
+  }
+
+  /**
+   * 将交易服务注册到该管理者中
+   * 
+   * @param service
+   */
+  public void register(ITradeService service) {
+    services.add(service);
+  }
+
+  /**
+   * 获取指定名字的交易服务
+   * 
+   * @param name 交易服务名
+   * @return 指定交易服务
+   */
+  public ITradeService getService(String name) {
+    for (ITradeService service : services) {
+      if (service.getName().equals(name)) {
+        return service;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * 获取特定投资服务可用的交易服务列表
+   * 
+   * @param investService
+   * @return
+   */
+  public List<ITradeService> getAvailableTradeServices(String investService) {
+    Assert.notNull(investService);
+
+    List<ITradeService> result = new ArrayList<ITradeService>();
+
+    for (ITradeService service : services) {
+      if (service.getSupportedInvestService().getName().equals(investService)) {
+        result.add(service);
+      }
+    }
+    return result;
+  }
+
+  public void acceptInstruction(SendInstructionCommand command) {
+
+    List<ITradeService> services = this.getAvailableTradeServices(command.getInvestService());
 
     Double maxCapital = 0.0;
     Integer maxPosition = 0;
 
-    for (TradeServiceBase service : services) {
-      service.init(commitInstructionCmd);
+    for (ITradeService service : services) {
+      // service.init(commitInstructionCmd);
 
-      maxCapital = Math.max(maxCapital, service.calculateRequiredCapital());
-      maxPosition = Math.max(maxPosition, service.calculateRequiredPosition());
+      // maxCapital = Math.max(maxCapital, service.calculateRequiredCapital());
+      // maxPosition = Math.max(maxPosition, service.calculateRequiredPosition());
     }
 
     // 取大值向资金服务申请资源
   }
 
-  // 获取指定投资服务下的所有可用交易服务
-  public List<TradeServiceBase> getAvailableTradeServices(String investSvc) {
-    List<TradeServiceBase> result = new ArrayList<TradeServiceBase>();
-
-    Field[] fields = TradeServiceManager.class.getDeclaredFields();
-    for (Field field : fields) {
-      SupportedInvestService supportedInvestService =
-          field.getType().getAnnotation(SupportedInvestService.class);
-      if (supportedInvestService != null) {
-        if ((investSvc == null)
-            || (investSvc != null && supportedInvestService.value().equals(investSvc))) {
-          try {
-            Object o = field.get(this);
-            result.add((TradeServiceBase) o);
-          } catch (IllegalArgumentException | IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-          }
-        }
-      }
-    }
-    return result;
-  }
 }

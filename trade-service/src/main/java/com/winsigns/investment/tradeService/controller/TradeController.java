@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winsigns.investment.tradeService.command.CommitInstructionCommand;
+import com.winsigns.investment.tradeService.command.SendInstructionCommand;
 import com.winsigns.investment.tradeService.resource.TradeServiceResource;
 import com.winsigns.investment.tradeService.resource.TradeServiceResourceAssembler;
-import com.winsigns.investment.tradeService.service.TradeServiceManager;
+import com.winsigns.investment.tradeService.service.common.TradeServiceManager;
 
 @RestController
-@RequestMapping(path = "/trade",
+@RequestMapping(path = "/trades",
     produces = {HAL_JSON_VALUE, APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
 public class TradeController {
 
@@ -35,8 +35,8 @@ public class TradeController {
   }
 
   @PostMapping
-  public void acceptInstrucion(@RequestBody CommitInstructionCommand CommitInstructionCmd) {
-    CommitInstructionCmd.setInvestSvc("stock");
+  public void acceptInstrucion(@RequestBody SendInstructionCommand CommitInstructionCmd) {
+    CommitInstructionCmd.setInvestService("stock");
     tradeServiceManager.acceptInstruction(CommitInstructionCmd);
   }
 }

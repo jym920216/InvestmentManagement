@@ -20,7 +20,7 @@ public class FutureInvestService extends AbstractInvestService {
   }
 
   @Override
-  public FutureInvestType[] getInstructionType() {
+  public FutureInvestType[] getInvestType() {
     return FutureInvestType.values();
   }
 
