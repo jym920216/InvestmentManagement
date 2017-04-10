@@ -36,6 +36,8 @@ import com.winsigns.investment.investService.service.common.InvestServiceManager
  * 修改指令<br>
  * 删除指令<br>
  * 提交指令<br>
+ * 创建篮子<br>
+ * 创建篮子指令<br>
  * 
  * @author yimingjin
  *

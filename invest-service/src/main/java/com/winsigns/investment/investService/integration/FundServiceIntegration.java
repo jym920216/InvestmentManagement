@@ -1,10 +1,13 @@
 package com.winsigns.investment.investService.integration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.winsigns.investment.framework.integration.AbstractIntegration;
 
@@ -16,6 +19,8 @@ import com.winsigns.investment.framework.integration.AbstractIntegration;
  */
 @Component
 public class FundServiceIntegration extends AbstractIntegration {
+
+  private Logger log = LoggerFactory.getLogger(FundServiceIntegration.class);
 
   private String portfolioURL = "/portfolios/%d";
 
@@ -32,6 +37,10 @@ public class FundServiceIntegration extends AbstractIntegration {
           this.getIntegrationURI() + String.format(portfolioURL, portfolioId), String.class);
       return JsonPath.read(resultStr.getBody(), "$.investManagerId");
     } catch (RestClientException e) {
+      log.warn(e.getMessage());
+      return null;
+    } catch (PathNotFoundException e) {
+      log.warn(e.getMessage());
       return null;
     }
   }
