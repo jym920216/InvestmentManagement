@@ -102,8 +102,8 @@ public class InstructionResource extends HALResponse<Instruction> {
         .getServicesInfo().entrySet()) {
       Enum<?>[] enums = info.getValue();
       for (int i = 0; i < enums.length; ++i) {
-        this.supprotedInvestService.add(
-            new Item(info.getKey().getName() + "." + enums[i].name(), i18nHelper.i18n(enums[i])));
+        this.supprotedInvestService.add(new Item(info.getKey().getName() + "." + enums[i].name(),
+            info.getKey().getSimpleName() + "-" + i18nHelper.i18n(enums[i])));
       }
     }
     // 4.支持的币种
