@@ -79,7 +79,11 @@ public class InstructionResource extends HALResponse<Instruction> {
         InvestServiceManager.getInstance().getService(instruction.getInvestService());
     if (service != null) {
       this.investServiceLabel = service.getSimpleName();
-      this.investTypeLabel = i18nHelper.i18n(service.getInvestType(instruction.getInvestType()));
+      if (service.getInvestType(instruction.getInvestType()) != null) {
+        this.investTypeLabel = i18nHelper.i18n(service.getInvestType(instruction.getInvestType()));
+      } else {
+        this.investTypeLabel = null;
+      }
     } else {
       this.investServiceLabel = null;
       this.investTypeLabel = null;
