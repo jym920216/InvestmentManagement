@@ -52,8 +52,8 @@ public class InstructionController {
       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date beginDate,
       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date endDate) {
     Link link = linkTo(InstructionController.class).withSelfRel();
-    Link deleteLink = linkTo(methodOn((InstructionController.class)).deleteInstructions(null))
-        .withRel("batch-delete");
+    Link deleteLink =
+        linkTo(methodOn((InstructionController.class)).deleteInstructions(null)).withRel("deletes");
     Collection<Instruction> instructions =
         instructionService.findNormalInstructionByCondition(investManagerId, beginDate, endDate);
     return new Resources<InstructionResource>(
@@ -80,11 +80,13 @@ public class InstructionController {
 
   /**
    * 批量删除指令
+   * <p>
+   * delete 无法传入body，暂时采用post
    * 
    * @param command
    * @return
    */
-  @DeleteMapping
+  @PostMapping("/deletes")
   public ResponseEntity<?> deleteInstructions(@RequestBody BatchDeleteInstructionCommand command) {
     instructionService.deleteInstruction(command.getInstructionIds());
     return new ResponseEntity<Object>(HttpStatus.NO_CONTENT);

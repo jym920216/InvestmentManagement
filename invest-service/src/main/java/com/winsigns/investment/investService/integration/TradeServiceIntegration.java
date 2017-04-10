@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 import com.winsigns.investment.framework.integration.AbstractIntegration;
-import com.winsigns.investment.investService.command.SendInstructionCommand;
+import com.winsigns.investment.investService.command.CommitInstructionCommand;
 import com.winsigns.investment.investService.model.Instruction;
 
 /**
@@ -32,10 +32,20 @@ public class TradeServiceIntegration extends AbstractIntegration {
 
   public boolean commitInstruction(Instruction instruction) {
 
-    SendInstructionCommand command = new SendInstructionCommand();
+    CommitInstructionCommand command = new CommitInstructionCommand();
+    command.setInstructionId(instruction.getId());
+    command.setPortfolioId(instruction.getPortfolioId());
+    command.setSecurityId(instruction.getSecurityId());
+    command.setInvestService(instruction.getInvestService());
+    command.setInvestType(instruction.getInvestType());
+    command.setCurrency(instruction.getCurrency());
+    command.setCostPrice(instruction.getCostPrice());
+    command.setVolumeType(instruction.getVolumeType());
+    command.setQuantity(instruction.getQuantity());
+    command.setAmount(instruction.getAmount());
 
-    HttpEntity<SendInstructionCommand> requestEntity =
-        new HttpEntity<SendInstructionCommand>(command);
+    HttpEntity<CommitInstructionCommand> requestEntity =
+        new HttpEntity<CommitInstructionCommand>(command);
 
     try {
       ResponseEntity<String> resultStr = restTemplate

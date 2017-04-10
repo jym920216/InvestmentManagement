@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winsigns.investment.tradeService.command.SendInstructionCommand;
+import com.winsigns.investment.tradeService.command.CommitInstructionCommand;
 import com.winsigns.investment.tradeService.resource.TradeServiceResource;
 import com.winsigns.investment.tradeService.resource.TradeServiceResourceAssembler;
 import com.winsigns.investment.tradeService.service.common.TradeServiceManager;
@@ -35,8 +35,7 @@ public class TradeController {
   }
 
   @PostMapping
-  public void acceptInstrucion(@RequestBody SendInstructionCommand CommitInstructionCmd) {
-    CommitInstructionCmd.setInvestService("stock");
+  public void acceptInstrucion(@RequestBody CommitInstructionCommand CommitInstructionCmd) {
     tradeServiceManager.acceptInstruction(CommitInstructionCmd);
   }
 }

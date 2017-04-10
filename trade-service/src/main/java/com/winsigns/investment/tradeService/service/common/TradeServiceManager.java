@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.winsigns.investment.tradeService.command.SendInstructionCommand;
+import com.winsigns.investment.tradeService.command.CommitInstructionCommand;
 
 @Service
 public class TradeServiceManager {
@@ -66,7 +66,12 @@ public class TradeServiceManager {
     return result;
   }
 
-  public void acceptInstruction(SendInstructionCommand command) {
+  /**
+   * 接受
+   * 
+   * @param command
+   */
+  public void acceptInstruction(CommitInstructionCommand command) {
 
     List<ITradeService> services = this.getAvailableTradeServices(command.getInvestService());
 

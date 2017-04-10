@@ -1,12 +1,12 @@
-package com.winsigns.investment.investService.command;
+package com.winsigns.investment.tradeService.command;
 
-import com.winsigns.investment.investService.constant.CurrencyCode;
-import com.winsigns.investment.investService.constant.InstructionVolumeType;
+import com.winsigns.investment.tradeService.constant.CurrencyCode;
+import com.winsigns.investment.tradeService.constant.InstructionVolumeType;
 
 import lombok.Data;
 
 @Data
-public class SendInstructionCommand {
+public class CommitInstructionCommand {
 
   // 指令序号
   Long instructionId;
@@ -20,8 +20,8 @@ public class SendInstructionCommand {
   // 投资服务
   String investService;
 
-  // 投资方向
-  String investDirection;
+  // 投资类型
+  String investType;
 
   // 币种
   CurrencyCode currency;
@@ -33,7 +33,7 @@ public class SendInstructionCommand {
   InstructionVolumeType volumeType;
 
   // 指令数量
-  Integer quantity;
+  Long quantity;
 
   // 指令金额
   Double amount;
