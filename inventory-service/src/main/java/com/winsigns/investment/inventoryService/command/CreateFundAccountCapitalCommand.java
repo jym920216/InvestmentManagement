@@ -1,6 +1,6 @@
 package com.winsigns.investment.inventoryService.command;
 
-import java.util.Currency;
+import com.winsigns.investment.inventoryService.constant.CurrencyCode;
 
 import lombok.Data;
 
@@ -11,6 +11,6 @@ public class CreateFundAccountCapitalCommand {
 
   private String externalCapitalAccountType;
 
-  private Currency currency;
+  private CurrencyCode currency;
 
 }

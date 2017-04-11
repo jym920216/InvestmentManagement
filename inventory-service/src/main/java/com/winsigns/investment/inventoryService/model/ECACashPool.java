@@ -4,11 +4,12 @@
 package com.winsigns.investment.inventoryService.model;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -18,6 +19,7 @@ import org.springframework.hateoas.core.Relation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winsigns.investment.framework.measure.MeasureHost;
 import com.winsigns.investment.framework.measure.MeasureHostType;
+import com.winsigns.investment.inventoryService.constant.CurrencyCode;
 import com.winsigns.investment.inventoryService.measure.ECACashPoolMHT;
 
 import lombok.Getter;
@@ -40,7 +42,8 @@ public class ECACashPool extends MeasureHost {
    */
   @Getter
   @Setter
-  private Currency currency;
+  @Enumerated(EnumType.STRING)
+  private CurrencyCode currency;
 
   /*
    * 未分配资金

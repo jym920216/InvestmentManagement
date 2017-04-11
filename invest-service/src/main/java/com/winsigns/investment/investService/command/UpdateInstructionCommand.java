@@ -5,7 +5,12 @@ import com.winsigns.investment.investService.constant.InstructionVolumeType;
 
 import lombok.Data;
 
-
+/**
+ * 更新指令的命令
+ * 
+ * @author yimingjin
+ *
+ */
 @Data
 public class UpdateInstructionCommand {
   // 投资组合

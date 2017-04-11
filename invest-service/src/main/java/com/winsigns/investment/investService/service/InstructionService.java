@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import com.winsigns.investment.framework.i18n.i18nHelper;
-import com.winsigns.investment.investService.command.CreateInstructionBasketCommand;
 import com.winsigns.investment.investService.command.CreateInstructionCommand;
 import com.winsigns.investment.investService.command.UpdateInstructionCommand;
 import com.winsigns.investment.investService.constant.InstructionMessageCode;
@@ -22,9 +20,7 @@ import com.winsigns.investment.investService.constant.InstructionOperatorType;
 import com.winsigns.investment.investService.constant.InstructionStatus;
 import com.winsigns.investment.investService.integration.FundServiceIntegration;
 import com.winsigns.investment.investService.model.Instruction;
-import com.winsigns.investment.investService.model.InstructionBasket;
 import com.winsigns.investment.investService.model.InstructionMessage;
-import com.winsigns.investment.investService.repository.InstructionBasketRepository;
 import com.winsigns.investment.investService.repository.InstructionMessageRepository;
 import com.winsigns.investment.investService.repository.InstructionRepository;
 import com.winsigns.investment.investService.service.common.InvestServiceManager;
@@ -36,8 +32,7 @@ import com.winsigns.investment.investService.service.common.InvestServiceManager
  * 修改指令<br>
  * 删除指令<br>
  * 提交指令<br>
- * 创建篮子<br>
- * 创建篮子指令<br>
+
  * 
  * @author yimingjin
  *
@@ -46,8 +41,6 @@ import com.winsigns.investment.investService.service.common.InvestServiceManager
 public class InstructionService {
 
   Logger log = LoggerFactory.getLogger(InstructionService.class);
-
-  final static String DEFAULT_BASKET_NAME = "Instruction.DEFAULT_BASKET_NAME";
 
   @Autowired
   InstructionRepository instructionRepository;
@@ -59,7 +52,7 @@ public class InstructionService {
   FundServiceIntegration fundService;
 
   @Autowired
-  InstructionBasketRepository basketRepository;
+  InstructionBasketService basketService;
 
   /**
    * 查询一条指令
@@ -208,18 +201,7 @@ public class InstructionService {
       thisInstruction.setExecutionStatus(InstructionStatus.DELETED);
       instructionRepository.save(thisInstruction);
     } else {
-      InstructionBasket thisBasket = basketRepository.findOne(instructionId);
-      Assert.notNull(thisBasket);
-
-      if (!thisBasket.getExecutionStatus().isSupportedOperator(InstructionOperatorType.DELETE)) {
-        return;
-      }
-
-      for (Instruction instruction : thisBasket.getInstructions()) {
-        instruction.setExecutionStatus(InstructionStatus.DELETED);
-      }
-      thisBasket.setExecutionStatus(InstructionStatus.DELETED);
-      basketRepository.save(thisBasket);
+      basketService.deleteInstructionBasket(instructionId);
     }
   }
 
@@ -325,81 +307,5 @@ public class InstructionService {
       }
     }
     return true;
-  }
-
-  /**
-   * 查询一个篮子
-   * 
-   * @param instructionBasketId
-   * @return
-   */
-  public InstructionBasket readInstructionBasket(Long instructionBasketId) {
-
-    Assert.notNull(instructionBasketId);
-
-    InstructionBasket thisBasket = basketRepository.findOne(instructionBasketId);
-
-    Assert.notNull(thisBasket);
-
-    return thisBasket;
-  }
-
-  /**
-   * 增加一个篮子
-   * <p>
-   * 如果没有传入篮子名，则带有默认篮子名<br>
-   * 带有一条空的篮子指令
-   * 
-   * @param command
-   * @return
-   */
-  public InstructionBasket addInstructionBasket(CreateInstructionBasketCommand command) {
-
-    // 投资经理必须输入，以后可能在controller中通过session赋值
-    Assert.notNull(command.getInvestManagerId());
-
-    InstructionBasket newBasket = new InstructionBasket();
-
-    newBasket.setInvestManagerId(command.getInvestManagerId());
-    newBasket.setExecutionStatus(InstructionStatus.DRAFT);
-    if (command.getBasketName() != null) {
-      newBasket.setBasketName(command.getBasketName());
-    } else {
-      newBasket.setBasketName(i18nHelper.i18n(DEFAULT_BASKET_NAME));
-    }
-
-    return addInstructionOfBasket(newBasket, command);
-  }
-
-  /**
-   * 在篮子下增加一条指令
-   * 
-   * @param thisBasket
-   * @param command
-   * @return
-   */
-  protected InstructionBasket addInstructionOfBasket(InstructionBasket thisBasket,
-      CreateInstructionCommand command) {
-    Assert.notNull(thisBasket);
-    Instruction newInstruction = this.addInstruction(command);
-    thisBasket.addInstruction(newInstruction);
-    return basketRepository.save(thisBasket);
-  }
-
-  /**
-   * 在篮子下增加一条指令
-   * 
-   * @param basketId 篮子号
-   * @param instructionCommand
-   * @return 返回这个篮子
-   */
-  public InstructionBasket addInstructionOfBasket(Long basketId,
-      CreateInstructionCommand instructionCommand) {
-
-    Assert.notNull(basketId);
-
-    InstructionBasket thisBasket = basketRepository.findOne(basketId);
-
-    return addInstructionOfBasket(thisBasket, instructionCommand);
   }
 }
