@@ -37,8 +37,8 @@ public abstract class AbstractInvestService implements IInvestService {
   }
 
   @Override
-  public Enum<?> getInvestType(String name) {
-    for (Enum<?> type : this.getInvestType()) {
+  public IInvestType getInvestType(String name) {
+    for (IInvestType type : this.getInvestType()) {
       if (type.name().equals(name)) {
         return type;
       }

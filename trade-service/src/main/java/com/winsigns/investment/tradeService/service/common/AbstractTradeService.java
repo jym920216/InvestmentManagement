@@ -31,4 +31,14 @@ public abstract class AbstractTradeService implements ITradeService {
     return i18nHelper.i18n(getName());
   }
 
+  @Override
+  public ITradeType getTradeType(String name) {
+    for (ITradeType type : this.getTradeType()) {
+      if (type.name().equals(name)) {
+        return type;
+      }
+    }
+    return null;
+  }
+
 }

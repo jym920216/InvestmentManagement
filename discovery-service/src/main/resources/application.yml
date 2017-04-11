@@ -7,7 +7,6 @@ eureka:
   instance:
     hostname: discovery-service
     preferIpAddress: true
-    ipAddress: 112.74.173.112
   server:
     enableSelfPreservation: false
   client:

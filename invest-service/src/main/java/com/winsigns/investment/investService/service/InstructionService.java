@@ -166,7 +166,21 @@ public class InstructionService {
    * @param thisInstruction
    */
   protected void checkSecurityAndDirection(Instruction thisInstruction) {
-    // TODO
+
+    if (thisInstruction.getSecurityId() == null) {
+      thisInstruction.addInstructionMessage(new InstructionMessage(thisInstruction, "securityId",
+          InstructionMessageType.ERROR, InstructionMessageCode.INVEST_SECURITY_CANNOT_NULL));
+    }
+
+    if (thisInstruction.getInvestService() == null) {
+      thisInstruction.addInstructionMessage(new InstructionMessage(thisInstruction, "investService",
+          InstructionMessageType.ERROR, InstructionMessageCode.INVEST_SERVICE_CANNOT_NULL));
+    }
+
+    if (thisInstruction.getInvestType() == null) {
+      thisInstruction.addInstructionMessage(new InstructionMessage(thisInstruction, "investType",
+          InstructionMessageType.ERROR, InstructionMessageCode.INVEST_TYPE_CANNOT_NULL));
+    }
   }
 
   /**
@@ -269,15 +283,24 @@ public class InstructionService {
    * @return
    */
   @Transactional
-  public boolean commitInstruction(Long instructionId) {
+  public Instruction commitInstruction(Long instructionId) {
 
     Instruction thisInstruction = instructionRepository.findOne(instructionId);
 
+    Assert.notNull(thisInstruction);
+
     if (!thisInstruction.getExecutionStatus().isSupportedOperator(InstructionOperatorType.COMMIT)) {
-      return false;
+      thisInstruction.addInstructionMessage(
+          new InstructionMessage(thisInstruction, "executionStatus", InstructionMessageType.ERROR,
+              InstructionMessageCode.INSTRUCTION_OPERATOR_NOT_SUPPORT));
+      return thisInstruction;
     }
 
     if (!thisInstruction.isBasket()) {
+      if (!commitCheck(thisInstruction)) {
+        return thisInstruction;
+      }
+
       if (InvestServiceManager.getInstance().commitInstruction(thisInstruction)) {
         thisInstruction.setExecutionStatus(InstructionStatus.COMMITING);
         instructionRepository.save(thisInstruction);
@@ -285,12 +308,22 @@ public class InstructionService {
         thisInstruction
             .addInstructionMessage(new InstructionMessage(thisInstruction, "executionStatus",
                 InstructionMessageType.ERROR, InstructionMessageCode.INSTRUCTION_COMMIT_FAIL));
-        instructionRepository.save(thisInstruction);
+        thisInstruction = instructionRepository.save(thisInstruction);
       }
     } else {
       // TODO 篮子的提交待处理
     }
 
+    return thisInstruction;
+  }
+
+  protected boolean commitCheck(Instruction thisInstruction) {
+    check(thisInstruction);
+    for (InstructionMessage message : thisInstruction.getMessages()) {
+      if (message.getMessageType().equals(InstructionMessageType.ERROR)) {
+        return false;
+      }
+    }
     return true;
   }
 

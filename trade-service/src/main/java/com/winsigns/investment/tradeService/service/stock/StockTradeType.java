@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.winsigns.investment.framework.i18n.i18nHelper;
+import com.winsigns.investment.tradeService.service.common.IMockInvestType;
 import com.winsigns.investment.tradeService.service.common.ITradeType;
 
 public enum StockTradeType implements ITradeType {
@@ -19,15 +20,16 @@ public enum StockTradeType implements ITradeType {
   }
 
   // 支持的操作
-  private static HashMap<StockTradeType, List<Enum<?>>> supportInvestTypes =
-      new HashMap<StockTradeType, List<Enum<?>>>();
+  private static HashMap<StockTradeType, List<IMockInvestType>> supportInvestTypes =
+      new HashMap<StockTradeType, List<IMockInvestType>>();
   static {
-    supportInvestTypes.put(BUY, asList(StockInvestService.StockInvestType.BUY));
-    supportInvestTypes.put(SELL, asList(StockInvestService.StockInvestType.SELL));
+    supportInvestTypes.put(BUY, asList(StockInvestType.BUY));
+    supportInvestTypes.put(SELL, asList(StockInvestType.SELL));
   }
 
   @Override
-  public List<Enum<?>> getSupportInvestTypes() {
+  public List<IMockInvestType> getSupportInvestTypes() {
     return supportInvestTypes.get(this);
   }
+
 }

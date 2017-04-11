@@ -67,7 +67,7 @@ public class TradeServiceManager {
   }
 
   /**
-   * 接受
+   * 接受一条指令，向清单服务发送资源申请
    * 
    * @param command
    */
@@ -76,13 +76,11 @@ public class TradeServiceManager {
     List<ITradeService> services = this.getAvailableTradeServices(command.getInvestService());
 
     Double maxCapital = 0.0;
-    Integer maxPosition = 0;
+    Long maxPosition = 0L;
 
     for (ITradeService service : services) {
-      // service.init(commitInstructionCmd);
-
-      // maxCapital = Math.max(maxCapital, service.calculateRequiredCapital());
-      // maxPosition = Math.max(maxPosition, service.calculateRequiredPosition());
+      maxCapital = Math.max(maxCapital, service.calculateRequiredCapital(command));
+      maxPosition = Math.max(maxPosition, service.calculateRequiredPosition(command));
     }
 
     // 取大值向资金服务申请资源

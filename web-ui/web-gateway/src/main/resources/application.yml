@@ -23,7 +23,6 @@ zuul:
 eureka:
   instance:
     preferIpAddress: true
-    ipAddress: 112.74.173.112
   client:
     registryFetchIntervalSeconds: 5
     instanceInfoReplicationIntervalSeconds: 5

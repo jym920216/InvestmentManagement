@@ -12,6 +12,6 @@ public abstract class MockInvestService {
     return this.getClass().getSimpleName();
   }
 
-  public abstract Enum<?>[] getInstructionType();
+  public abstract IMockInvestType[] getInstructionType();
 
 }

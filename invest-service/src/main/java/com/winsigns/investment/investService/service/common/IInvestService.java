@@ -26,7 +26,7 @@ public interface IInvestService {
    * 
    * @return 投资类型
    */
-  Enum<?>[] getInvestType();
+  IInvestType[] getInvestType();
 
   /**
    * 获取指定名字的投资类型
@@ -34,7 +34,7 @@ public interface IInvestService {
    * @param name 名字
    * @return
    */
-  Enum<?> getInvestType(String name);
+  IInvestType getInvestType(String name);
 
   /**
    * 提交指令

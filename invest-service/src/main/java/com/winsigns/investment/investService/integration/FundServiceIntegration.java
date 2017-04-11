@@ -34,7 +34,8 @@ public class FundServiceIntegration extends AbstractIntegration {
     try {
       ResponseEntity<String> resultStr = restTemplate.getForEntity(
           this.getIntegrationURI() + String.format(portfolioURL, portfolioId), String.class);
-      return JsonPath.read(resultStr.getBody(), "$.investManagerId");
+      // 从jsonpath解析出来的数字，会自动转换成Integer或者Long，因此统一转成String先
+      return Long.valueOf(JsonPath.read(resultStr.getBody(), "$.investManagerId").toString());
     } catch (RestClientException e) {
       log.warn(e.getMessage());
       return null;

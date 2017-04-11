@@ -130,14 +130,17 @@ public class InstructionController {
     return new ResponseEntity<Object>(HttpStatus.NO_CONTENT);
   }
 
+  /**
+   * 提交一条指令
+   * 
+   * @param instructionId
+   * @return
+   */
   @PostMapping("/{instructionId}/commit")
-  public ResponseEntity<?> commitInstruction(@PathVariable Long instructionId) {
+  public InstructionResource commitInstruction(@PathVariable Long instructionId) {
 
-    instructionService.commitInstruction(instructionId);
+    Instruction thisInstruction = instructionService.commitInstruction(instructionId);
 
-    HttpHeaders responseHeaders = new HttpHeaders();
-    responseHeaders.setLocation(
-        linkTo(methodOn(InstructionController.class).readInstruction(instructionId)).toUri());
-    return new ResponseEntity<Object>("提交成功", responseHeaders, HttpStatus.OK);
+    return new InstructionResourceAssembler().toResource(thisInstruction);
   }
 }
