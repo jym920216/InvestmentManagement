@@ -44,4 +44,6 @@ CREATE TABLE virtual_done
 	applied_capital DOUBLE PRECISION,
     applied_position BIGINT,
 	instruction_basket_id BIGINT,
+	done_time TIMESTAMP,
+	PRIMARY KEY (id)
 )CHARACTER SET = utf8;
