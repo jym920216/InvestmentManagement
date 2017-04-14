@@ -1,6 +1,7 @@
 package com.winsigns.investment.tradeService.service.common;
 
 import com.winsigns.investment.tradeService.command.CommitInstructionCommand;
+import com.winsigns.investment.tradeService.model.Done;
 
 /**
  * 交易服务的接口
@@ -28,6 +29,17 @@ public interface ITradeService {
    */
   MockInvestService getSupportedInvestService();
 
+  /**
+   * 
+   * @return 所使用的资金服务
+   */
+  MockCapitalService getUsedCapitalService();
+
+  /**
+   * 
+   * @return 所使用的持仓服务
+   */
+  MockPositionService getUsedPositionService();
 
   /**
    * 投资标的
@@ -52,18 +64,30 @@ public interface ITradeService {
   ITradeType getTradeType(String name);
 
   /**
-   * 计算指令需要的资金
+   * 价格类型
    * 
-   * @param command
    * @return
    */
-  Double calculateRequiredCapital(CommitInstructionCommand command);
+  IPriceType[] getPriceType();
 
   /**
-   * 计算指令需要的持仓
+   * 计算指令需要的资源
    * 
    * @param command
    * @return
    */
-  Long calculateRequiredPosition(CommitInstructionCommand command);
+  Resource calculateRequiredResource(CommitInstructionCommand command);
+
+  /**
+   * 虚拟成交
+   */
+  void virtualDone(CommitInstructionCommand command, Resource resource);
+
+  /**
+   * 成交信息
+   * 
+   * @param thisDone
+   */
+  void done(Done thisDone);
+
 }

@@ -4,10 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -32,15 +29,13 @@ import com.winsigns.investment.investService.service.common.InvestServiceManager
  * 修改指令<br>
  * 删除指令<br>
  * 提交指令<br>
-
+ * 
  * 
  * @author yimingjin
  *
  */
 @Service
 public class InstructionService {
-
-  Logger log = LoggerFactory.getLogger(InstructionService.class);
 
   @Autowired
   InstructionRepository instructionRepository;
@@ -234,8 +229,8 @@ public class InstructionService {
       endDate = new Date();
     }
     return instructionRepository
-        .findByInvestManagerIdAndCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNull(
-            investManagerId, beginDate, endDate, InstructionStatus.DELETED, sortByCreateTime());
+        .findByInvestManagerIdAndCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(
+            investManagerId, beginDate, endDate, InstructionStatus.DELETED);
   }
 
   /**
@@ -245,17 +240,9 @@ public class InstructionService {
    * @return
    */
   public Collection<Instruction> findDeletedInstructionByCondition(Long investManagerId) {
-    return instructionRepository.findByInvestManagerIdAndExecutionStatusAndInstructionBasketIsNull(
-        investManagerId, InstructionStatus.DELETED, sortByCreateTime());
-  }
-
-  /**
-   * 默认的排序方式
-   * 
-   * @return
-   */
-  private Sort sortByCreateTime() {
-    return new Sort(Sort.Direction.DESC, "createTime");
+    return instructionRepository
+        .findByInvestManagerIdAndExecutionStatusAndInstructionBasketIsNullOrderByCreateTimeDesc(
+            investManagerId, InstructionStatus.DELETED);
   }
 
   /**

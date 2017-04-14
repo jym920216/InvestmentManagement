@@ -3,7 +3,7 @@ package com.winsigns.investment.tradeService.service.common;
 import java.util.List;
 
 /**
- * 投资类型的接口
+ * 交易类型的接口
  * 
  * @author yimingjin
  *

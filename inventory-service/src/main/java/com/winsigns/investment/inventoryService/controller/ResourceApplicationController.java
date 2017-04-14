@@ -13,22 +13,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winsigns.investment.inventoryService.command.ApplyInventoryCommand;
-import com.winsigns.investment.inventoryService.service.InventoryService;
+import com.winsigns.investment.inventoryService.command.ApplyResourceCommand;
+import com.winsigns.investment.inventoryService.service.ResourceApplicationService;
 
 @RestController
 @RequestMapping(path = "/inventories",
     produces = {HAL_JSON_VALUE, APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
-public class InventoryController {
+public class ResourceApplicationController {
 
   @Autowired
-  InventoryService inventoryService;
+  ResourceApplicationService service;
 
   @PostMapping
   public ResponseEntity<?> applyInventory(
-      @RequestBody ApplyInventoryCommand applyInventoryCommand) {
+      @RequestBody ApplyResourceCommand applyInventoryCommand) {
 
-    // inventoryService.apply(applyInventoryCommand);
+    service.apply(applyInventoryCommand);
 
     HttpHeaders responseHeaders = new HttpHeaders();
     return new ResponseEntity<Object>(responseHeaders, HttpStatus.NO_CONTENT);

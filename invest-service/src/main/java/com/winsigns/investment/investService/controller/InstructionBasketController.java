@@ -82,7 +82,7 @@ public class InstructionBasketController {
    * @param instructionCommand
    * @return
    */
-  @PostMapping("/{instructionBasketId}")
+  @PostMapping("/{instructionBasketId}/instructions")
   public ResponseEntity<?> createInstructionOfBasket(@PathVariable Long instructionBasketId,
       @RequestBody CreateInstructionCommand instructionCommand) {
 

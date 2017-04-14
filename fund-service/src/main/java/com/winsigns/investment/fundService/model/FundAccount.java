@@ -47,6 +47,5 @@ public class FundAccount extends AbstractEntity {
   @Getter
   @Setter
   @ManyToOne
-  @JsonIgnore
   private InvestManager investManager;
 }
