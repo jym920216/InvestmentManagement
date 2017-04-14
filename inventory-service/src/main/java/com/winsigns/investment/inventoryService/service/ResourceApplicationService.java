@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -69,8 +70,12 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
   @Autowired
   PositionServiceManager positionServiceManager;
 
+  @Autowired
+  KafkaTemplate kafkaTemplate;
+
   static final String applyKey = "fund-accounts";
   static final String applyKeyTemp = "fund-accounts:%d";
+  static final String applyTopic = "resource-application";
 
   /**
    * 接受一条资源申请
@@ -147,9 +152,9 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
 
     // TODO 往kafka 发送消息
     if (flag) {
-
+      kafkaTemplate.send(applyTopic, "test", "true");
     } else {
-
+      kafkaTemplate.send(applyTopic, "test", "false");
     }
   }
 

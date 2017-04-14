@@ -1,24 +1,14 @@
 package com.winsigns.investment.inventoryService.position.common;
 
+import com.winsigns.investment.framework.service.IService;
+
 /**
  * 持仓服务的接口
  * 
  * @author yimingjin
  *
  */
-public interface IPositionService {
-
-  /**
-   *
-   * @return 服务名称
-   */
-  String getName();
-
-  /**
-   * 
-   * @return 服务简称
-   */
-  String getSimpleName();
+public interface IPositionService extends IService {
 
   /**
    * 投资服务申请持仓

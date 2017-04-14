@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.winsigns.investment.framework.i18n.i18nHelper;
-import com.winsigns.investment.inventoryService.constant.ExternalTradeAccountType;
 
 @Service
 public abstract class AbstractPositionService implements IPositionService {
@@ -28,11 +27,5 @@ public abstract class AbstractPositionService implements IPositionService {
   public String getSimpleName() {
     return i18nHelper.i18n(getName());
   }
-
-  // 账户类型
-  abstract public ExternalTradeAccountType getAccountType();
-
-  // 支持资金清算
-  abstract public CapitalLiquidation supportCapitalLiquidation();
 
 }

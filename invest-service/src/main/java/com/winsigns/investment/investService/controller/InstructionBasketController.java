@@ -44,7 +44,8 @@ public class InstructionBasketController {
    * @return
    */
   @PostMapping
-  public ResponseEntity<?> createInstruction(@RequestBody CreateInstructionBasketCommand command) {
+  public ResponseEntity<?> createInstructionBasket(
+      @RequestBody CreateInstructionBasketCommand command) {
 
     InstructionBasket basket = basketService.addInstructionBasket(command);
 
