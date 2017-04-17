@@ -9,6 +9,6 @@ public class UpdateFundAccountCommand {
   private String name;
 
   // 投资经理
-  private Long investManangerId;
+  private Long investManagerId;
 
 }

@@ -66,10 +66,14 @@ CREATE TABLE eca_cash_serial
 CREATE TABLE position
 (
 	id BIGINT NOT NULL auto_increment,
+	dtype VARCHAR(32),
 	portfolio_id BIGINT NOT NULL,
 	external_trade_account_id BIGINT NOT NULL,
 	security_id BIGINT NOT NULL,
 	position_type VARCHAR(255) NOT NULL,
+	positionQuantity BIGINT,
+	canSellPositionQuantity BIGINT,
+	equityPositionQuantity BIGINT,
 	PRIMARY KEY (id)
 )CHARACTER SET = utf8;
 --外键

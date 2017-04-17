@@ -41,9 +41,6 @@ public class RootController {
             .withRel(
                 FundAccountCapitalDetail.class.getAnnotation(Relation.class).collectionRelation()));
 
-    halResponse.add(linkTo(methodOn((PositionController.class)).readPositions())
-        .withRel(Position.class.getAnnotation(Relation.class).collectionRelation()));
-
     return new ResponseEntity<>(halResponse, HttpStatus.OK);
   }
 }

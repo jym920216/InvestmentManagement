@@ -1,6 +1,7 @@
 package com.winsigns.investment.investService.controller;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.winsigns.investment.framework.hal.HALResponse;
 import com.winsigns.investment.investService.model.Instruction;
-import com.winsigns.investment.investService.model.InstructionBasket;
 
 /**
  * Created by colin on 2017/2/22.
@@ -25,7 +25,7 @@ public class RootController {
   public HttpEntity<HALResponse<String>> root() {
     HALResponse<String> halResponse = new HALResponse<String>("");
     halResponse.addCollectionLink(InstructionController.class, Instruction.class);
-    halResponse.addCollectionLink(InstructionBasketController.class, InstructionBasket.class);
+    halResponse.add(linkTo((InstructionController.class)).withRel("instruct-baskets"));
     return new ResponseEntity<>(halResponse, HttpStatus.OK);
   }
 }

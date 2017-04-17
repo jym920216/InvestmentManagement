@@ -119,9 +119,14 @@ public class InstructionService {
   }
 
   protected void check(Instruction thisInstruction) {
-    instructionMessageRepository.deleteByInstruction(thisInstruction);
+    // instructionMessageRepository.deleteByInstruction(thisInstruction);
+    if (!thisInstruction.getMessages().isEmpty()) {
+      instructionMessageRepository.delete(thisInstruction.getMessages());
+      thisInstruction.getMessages().clear();
+    }
     checkPortfolio(thisInstruction);
     checkSecurityAndDirection(thisInstruction);
+    // return instructionRepository.save(thisInstruction);
   }
 
   /**

@@ -1,15 +1,15 @@
-package com.winsigns.investment.inventoryService.position.common;
+package com.winsigns.investment.inventoryService.capital.common;
 
 import com.winsigns.investment.framework.service.IService;
 import com.winsigns.investment.inventoryService.exception.ResourceApplicationExcepiton;
 
 /**
- * 持仓服务的接口
+ * 资金服务的接口
  * 
  * @author yimingjin
  *
  */
-public interface IPositionService extends IService {
+public interface ICapitalService extends IService {
 
   /**
    * 投资服务申请持仓

@@ -3,23 +3,20 @@ package com.winsigns.investment.tradeService.service.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import com.winsigns.investment.framework.spring.SpringManager;
 import com.winsigns.investment.tradeService.command.CommitInstructionCommand;
 import com.winsigns.investment.tradeService.model.Done;
 
+@Component
 public class TradeServiceManager {
 
-  List<ITradeService> services;
+  List<ITradeService> services = new ArrayList<ITradeService>();
 
-  static private TradeServiceManager instance = new TradeServiceManager();
-
-  static public TradeServiceManager getInstance() {
-    return instance;
-  }
-
-  private TradeServiceManager() {
-    services = new ArrayList<ITradeService>();
+  static public TradeServiceManager getTradeServiceManager() {
+    return SpringManager.getApplicationContext().getBean(TradeServiceManager.class);
   }
 
   /**

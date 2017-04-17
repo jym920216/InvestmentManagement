@@ -22,6 +22,9 @@ import com.winsigns.investment.tradeService.repository.VirtualDoneRepository;
 public abstract class AbstractTradeService implements ITradeService {
 
   @Autowired
+  TradeServiceManager tradeServiceManager;
+
+  @Autowired
   protected InventoryServiceIntegration inventoryService;
 
   @Autowired
@@ -29,7 +32,7 @@ public abstract class AbstractTradeService implements ITradeService {
 
   @PostConstruct
   public void register() {
-    TradeServiceManager.getInstance().register(this);
+    tradeServiceManager.register(this);
   }
 
   @Override

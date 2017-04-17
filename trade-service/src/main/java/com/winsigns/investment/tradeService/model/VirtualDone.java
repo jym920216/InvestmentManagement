@@ -1,5 +1,7 @@
 package com.winsigns.investment.tradeService.model;
 
+import static com.winsigns.investment.tradeService.service.common.TradeServiceManager.getTradeServiceManager;
+
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -11,7 +13,6 @@ import com.winsigns.investment.tradeService.command.ApplyResourceCommand;
 import com.winsigns.investment.tradeService.constant.CurrencyCode;
 import com.winsigns.investment.tradeService.integration.InventoryServiceIntegration;
 import com.winsigns.investment.tradeService.service.common.ITradeService;
-import com.winsigns.investment.tradeService.service.common.TradeServiceManager;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -79,8 +80,7 @@ public class VirtualDone extends OperatorEntity {
 
   public void applyResource() {
 
-    ITradeService tradeService =
-        TradeServiceManager.getInstance().getService(this.getTradeService());
+    ITradeService tradeService = getTradeServiceManager().getService(this.getTradeService());
 
     ApplyResourceCommand applyCmd = new ApplyResourceCommand();
     applyCmd.setOperatorSequence(getOperatorSequence());

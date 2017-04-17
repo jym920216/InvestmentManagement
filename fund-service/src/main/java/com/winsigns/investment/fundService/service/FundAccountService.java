@@ -67,9 +67,9 @@ public class FundAccountService {
 
     fundAccount.setName(fundAccountCommand.getName());
 
-    if (fundAccountCommand.getInvestManangerId() != null) {
+    if (fundAccountCommand.getInvestManagerId() != null) {
       InvestManager investManager =
-          investManagerRepository.findOne(fundAccountCommand.getInvestManangerId());
+          investManagerRepository.findOne(fundAccountCommand.getInvestManagerId());
       Assert.notNull(investManager);
       fundAccount.setInvestManager(investManager);
     }

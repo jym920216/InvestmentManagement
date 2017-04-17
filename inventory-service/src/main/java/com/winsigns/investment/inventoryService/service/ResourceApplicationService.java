@@ -15,9 +15,9 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import com.winsigns.investment.inventoryService.command.ApplyResourceCommand;
+import com.winsigns.investment.inventoryService.exception.ResourceApplicationExcepiton;
 import com.winsigns.investment.inventoryService.integration.FundServiceIntegration;
 import com.winsigns.investment.inventoryService.model.ResourceApplicationForm;
 import com.winsigns.investment.inventoryService.model.ResourceApplicationForm.ApplyStatus;
@@ -139,23 +139,35 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
     this.start();
   }
 
-  public void processForm(ResourceApplicationForm form) {
+  public enum ErrorCode {
+    // 不支持的资金服务
+    NOT_SUPPORT_CAPITAL_SERVICE,
+    // 不支持的期货服务
+    NOT_SUPPORT_POSITION_SERVICE;
 
-    boolean flag = true;
-
-    IPositionService positionService = positionServiceManager.getService(form.getPositionService());
-    Assert.notNull(positionService);
-
-    if (!positionService.apply(form.getPortfolioId(), form.getSecurityId(), null)) {
-      flag = false;
-    }
-
-    // TODO 往kafka 发送消息
-    if (flag) {
-      kafkaTemplate.send(applyTopic, "test", "true");
-    } else {
-      kafkaTemplate.send(applyTopic, "test", "false");
+    public String toString() {
+      return "ResourceApplicationService:" + this.name();
     }
   }
 
+  public void processForm(ResourceApplicationForm form) {
+
+    try {
+      IPositionService positionService =
+          positionServiceManager.getService(form.getPositionService());
+      if (positionService == null) {
+        throw new ResourceApplicationExcepiton(ErrorCode.NOT_SUPPORT_POSITION_SERVICE.toString());
+      }
+
+      positionService.apply(form.getPortfolioId(), form.getSecurityId(), null,
+          form.getAppliedPosition());
+
+      kafkaTemplate.send(applyTopic, "test", "true");
+
+    } catch (ResourceApplicationExcepiton e) {
+
+      kafkaTemplate.send(applyTopic, "test", e.getMessage());
+    }
+
+  }
 }

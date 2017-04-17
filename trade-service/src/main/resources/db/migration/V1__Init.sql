@@ -1,4 +1,6 @@
+DROP TABLE IF EXISTS done;
 DROP TABLE IF EXISTS entrust;
+DROP TABLE IF EXISTS virtual_done;
 
 --委托
 CREATE TABLE entrust
@@ -34,7 +36,7 @@ CREATE TABLE done
 CREATE TABLE virtual_done
 (
 	id BIGINT NOT NULL auto_increment,
-	insturction_id BIGINT,
+	instruction_id BIGINT,
 	portfolio_id BIGINT,
 	security_id BIGINT,
 	invest_service VARCHAR(64),
@@ -45,5 +47,6 @@ CREATE TABLE virtual_done
     applied_position BIGINT,
 	instruction_basket_id BIGINT,
 	done_time TIMESTAMP,
+	operator_sequence BIGINT,
 	PRIMARY KEY (id)
 )CHARACTER SET = utf8;

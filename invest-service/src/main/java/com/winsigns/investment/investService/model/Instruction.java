@@ -77,7 +77,7 @@ public class Instruction extends AbstractEntity {
   @Getter
   @Setter
   @Enumerated(EnumType.STRING)
-  private InstructionVolumeType volumeType;
+  private InstructionVolumeType volumeType = InstructionVolumeType.FixedType;
 
   // 指令数量
   @Getter

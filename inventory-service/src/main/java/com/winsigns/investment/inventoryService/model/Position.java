@@ -8,8 +8,7 @@ import javax.persistence.InheritanceType;
 
 import org.springframework.hateoas.core.Relation;
 
-import com.winsigns.investment.framework.measure.MeasureHost;
-import com.winsigns.investment.framework.measure.MeasureHostType;
+import com.winsigns.investment.framework.model.AbstractEntity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +18,7 @@ import lombok.Setter;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
 @DiscriminatorValue("position")
-public class Position extends MeasureHost {
+public class Position extends AbstractEntity {
 
   @Getter
   @Setter
@@ -32,17 +31,5 @@ public class Position extends MeasureHost {
   @Getter
   @Setter
   private Long securityId;
-
-  @Override
-  protected Class<? extends MeasureHostType> defineType() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public MeasureHost parent() {
-    // TODO Auto-generated method stub
-    return null;
-  }
 
 }
