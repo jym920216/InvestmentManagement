@@ -224,18 +224,26 @@ public class InstructionService {
    * @return
    */
   public Collection<Instruction> findNormalInstructionByCondition(Long investManagerId,
-      Date beginDate, Date endDate) {
-
-    Assert.notNull(investManagerId);
+      Long traderId, Date beginDate, Date endDate) {
     if (beginDate == null) {
       beginDate = new Date();
     }
     if (endDate == null) {
       endDate = new Date();
     }
-    return instructionRepository
-        .findByInvestManagerIdAndCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(
-            investManagerId, beginDate, endDate, InstructionStatus.DELETED);
+    if (investManagerId != null) {
+      return instructionRepository
+          .findByInvestManagerIdAndCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(
+              investManagerId, beginDate, endDate, InstructionStatus.DELETED);
+    } else if (traderId != null) {
+      return instructionRepository
+          .findByTraderIdAndCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(
+              traderId, beginDate, endDate, InstructionStatus.DELETED);
+    } else {
+      return instructionRepository
+          .findByCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(
+              beginDate, endDate, InstructionStatus.DELETED);
+    }
   }
 
   /**
