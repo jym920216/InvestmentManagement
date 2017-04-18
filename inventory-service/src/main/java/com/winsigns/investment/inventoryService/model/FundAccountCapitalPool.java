@@ -25,7 +25,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Relation(value = "capital", collectionRelation = "capitals")
+@Relation(value = "capital-pool", collectionRelation = "capital-pools")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
 @DiscriminatorValue("capital_pool")
@@ -46,11 +46,12 @@ public class FundAccountCapitalPool extends AbstractEntity {
   @Enumerated(EnumType.STRING)
   private CurrencyCode currency;
 
-  /**
+  /*
    * 账户类型
    */
   @Getter
   @Setter
+  @Enumerated(EnumType.STRING)
   private ExternalCapitalAccountType accountType;
 
   /*

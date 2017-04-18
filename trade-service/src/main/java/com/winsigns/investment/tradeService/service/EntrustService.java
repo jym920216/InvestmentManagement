@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.winsigns.investment.tradeService.command.CreateEntrustCommand;
@@ -94,6 +95,7 @@ public class EntrustService {
    * @param command
    * @return
    */
+  @Transactional
   public Entrust updateEntrust(UpdateEntrustCommand command) {
     Long entrustId = command.getEntrustId();
     Assert.notNull(entrustId);

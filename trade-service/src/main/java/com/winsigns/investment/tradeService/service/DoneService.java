@@ -1,5 +1,7 @@
 package com.winsigns.investment.tradeService.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -71,6 +73,13 @@ public class DoneService {
     newDone.setDonePrice(command.getDonePrice());
 
     return doneRepository.save(newDone);
+  }
+
+  public List<Done> findByEntrust(Long entrustId) {
+    Assert.notNull(entrustId);
+    Entrust entrust = entrustRepository.findOne(entrustId);
+    Assert.notNull(entrust);
+    return entrust.getDones();
   }
 
 }

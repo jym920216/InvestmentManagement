@@ -1,12 +1,12 @@
 package com.winsigns.investment.tradeService.resource;
 
 import com.winsigns.investment.framework.hal.HALResponse;
-import com.winsigns.investment.tradeService.model.Entrust;
+import com.winsigns.investment.tradeService.model.Done;
 
-public class DoneResource extends HALResponse<Entrust> {
+public class DoneResource extends HALResponse<Done> {
 
-  public DoneResource(Entrust entrust) {
-    super(entrust);
+  public DoneResource(Done done) {
+    super(done);
 
   }
 

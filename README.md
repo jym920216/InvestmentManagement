@@ -83,6 +83,9 @@ service discovery with Eureka
 /eca-cash-pools GET
 /eca-cash-pools/{ecaCashPoolId} GET/PUT/DELETE
 
+/fa-capital-pools GET/POST
+/fa-capital-pools/{faCapitalPoolId} GET/PUT
+
 /instructions GET/POST/DELETE
 /instructions/{instructionId} GET/PUT/DELETE
 /instructions/{instructionId}/commit POST
@@ -90,4 +93,9 @@ service discovery with Eureka
 /instruction-baskets POST
 /instruction-baskets/{instructionBasketId} GET/PUT/DELETE
 /instruction-baskets/{instructionBasketId}/instructions POST
+
+/entrusts GET/POST
+/entrusts/{entrustId} GET/PUT/POST/DELETE
+
+/dones GET
 ```

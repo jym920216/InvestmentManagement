@@ -26,8 +26,8 @@ CREATE TABLE done
 (
 	id BIGINT NOT NULL auto_increment,
 	entrust_id BIGINT NOT NULL,
-	entrust_price DOUBLE PRECISION,
-    entrust_quantity BIGINT,
+	done_price DOUBLE PRECISION,
+    done_quantity BIGINT,
     status VARCHAR(64),
 	done_time TIMESTAMP,
 	PRIMARY KEY (id)

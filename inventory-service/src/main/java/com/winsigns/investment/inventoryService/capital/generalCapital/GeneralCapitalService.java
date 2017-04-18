@@ -40,11 +40,16 @@ public class GeneralCapitalService extends AbstractCapitalService {
   @Override
   public FundAccountCapitalPool createFundAccountCapitalPool(
       CreateFundAccountCapitalPoolCommand command) {
-    GeneralCapitalPool capitalPool = new GeneralCapitalPool();
-    capitalPool.setFundAccountId(command.getFundAccountId());
-    capitalPool.setCurrency(command.getCurrency());
-    capitalPool.setAccountType(this.getAccountType());
-    return generalCapitalRepository.save(capitalPool);
+    GeneralCapitalPool capitalPool = generalCapitalRepository
+        .findByFundAccountIdAndCurrency(command.getFundAccountId(), command.getCurrency());
+    if (capitalPool == null) {
+      capitalPool = new GeneralCapitalPool();
+      capitalPool.setFundAccountId(command.getFundAccountId());
+      capitalPool.setCurrency(command.getCurrency());
+      capitalPool.setAccountType(this.getAccountType());
+      capitalPool = generalCapitalRepository.save(capitalPool);
+    }
+    return capitalPool;
   }
 
   @Override

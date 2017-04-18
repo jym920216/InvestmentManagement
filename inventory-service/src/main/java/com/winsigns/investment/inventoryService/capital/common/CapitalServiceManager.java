@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import com.winsigns.investment.inventoryService.command.CreateFundAccountCapitalPoolCommand;
+import com.winsigns.investment.inventoryService.command.SetInvestmentLimitCommand;
 import com.winsigns.investment.inventoryService.constant.ExternalCapitalAccountType;
 import com.winsigns.investment.inventoryService.model.FundAccountCapitalPool;
 import com.winsigns.investment.inventoryService.repository.FundAccountCapitalPoolRepository;
@@ -58,13 +60,38 @@ public class CapitalServiceManager {
     return null;
   }
 
+  public List<FundAccountCapitalPool> findCapitalPoolsByFundAccount(Long fundAccountId) {
+    return capitalPoolRepository.findByFundAccountId(fundAccountId);
+  }
+
+  /**
+   * 获取指定的产品账户资金池
+   * 
+   * @param faCapitalPoolId
+   * @return
+   */
   public FundAccountCapitalPool readFundAccountCapitalPool(Long faCapitalPoolId) {
     return capitalPoolRepository.findOne(faCapitalPoolId);
   }
 
+  /**
+   * 创建一个指定类型的产品账户资金池
+   * 
+   * @param command
+   * @return
+   */
   public FundAccountCapitalPool createFundAccountCapitalPool(
       CreateFundAccountCapitalPoolCommand command) {
     return this.getService(command.getAccountType()).createFundAccountCapitalPool(command);
   }
 
+  public FundAccountCapitalPool setInvestmentLimit(SetInvestmentLimitCommand command) {
+    Assert.notNull(command.getFaCapitalPoolId());
+    FundAccountCapitalPool capitalPool =
+        capitalPoolRepository.findOne(command.getFaCapitalPoolId());
+    Assert.notNull(capitalPool);
+    // TODO 与已占用投资限额需要比较
+    capitalPool.setInvestmentLimit(command.getInvestmentLimit());
+    return capitalPoolRepository.save(capitalPool);
+  }
 }

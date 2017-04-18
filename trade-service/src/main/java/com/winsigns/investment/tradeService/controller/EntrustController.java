@@ -24,11 +24,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.winsigns.investment.tradeService.command.CreateDoneCommand;
 import com.winsigns.investment.tradeService.command.CreateEntrustCommand;
 import com.winsigns.investment.tradeService.command.UpdateEntrustCommand;
+import com.winsigns.investment.tradeService.model.Done;
 import com.winsigns.investment.tradeService.model.Entrust;
+import com.winsigns.investment.tradeService.resource.DoneResource;
+import com.winsigns.investment.tradeService.resource.DoneResourceAssembler;
 import com.winsigns.investment.tradeService.resource.EntrustResource;
 import com.winsigns.investment.tradeService.resource.EntrustResourceAssembler;
+import com.winsigns.investment.tradeService.service.DoneService;
 import com.winsigns.investment.tradeService.service.EntrustService;
 
 @RestController
@@ -38,6 +43,9 @@ public class EntrustController {
 
   @Autowired
   EntrustService entrustService;
+
+  @Autowired
+  DoneService doneService;
 
   @GetMapping
   public Resources<EntrustResource> readEntrusts(@RequestParam Long instructionId) {
@@ -61,8 +69,7 @@ public class EntrustController {
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.setLocation(
         linkTo(methodOn(EntrustController.class).readEntrust(entrust.getId())).toUri());
-    return new ResponseEntity<Object>(new EntrustResourceAssembler().toResource(entrust),
-        responseHeaders, HttpStatus.CREATED);
+    return new ResponseEntity<Object>(entrust, responseHeaders, HttpStatus.CREATED);
   }
 
   /**
@@ -74,6 +81,22 @@ public class EntrustController {
   @GetMapping("/{entrustId}")
   public EntrustResource readEntrust(@PathVariable Long entrustId) {
     return new EntrustResourceAssembler().toResource(entrustService.readEntrust(entrustId));
+  }
+
+  /**
+   * 在指定委托下面创建一条成交
+   * 
+   * @param entrustId
+   * @param command
+   * @return
+   */
+  @PostMapping("/{entrustId}")
+  public DoneResource createDone(@PathVariable Long entrustId,
+      @RequestBody CreateDoneCommand command) {
+    command.setEntrustId(entrustId);
+
+    Done done = doneService.addDone(command);
+    return new DoneResourceAssembler().toResource(done);
   }
 
   /**

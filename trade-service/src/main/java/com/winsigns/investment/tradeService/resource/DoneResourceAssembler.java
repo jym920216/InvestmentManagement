@@ -2,22 +2,22 @@ package com.winsigns.investment.tradeService.resource;
 
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
-import com.winsigns.investment.tradeService.controller.EntrustController;
-import com.winsigns.investment.tradeService.model.Entrust;
+import com.winsigns.investment.tradeService.controller.DoneController;
+import com.winsigns.investment.tradeService.model.Done;
 
-public class DoneResourceAssembler extends ResourceAssemblerSupport<Entrust, EntrustResource> {
+public class DoneResourceAssembler extends ResourceAssemblerSupport<Done, DoneResource> {
 
-    public DoneResourceAssembler() {
-        super(EntrustController.class, EntrustResource.class);
-    }
+  public DoneResourceAssembler() {
+    super(DoneController.class, DoneResource.class);
+  }
 
-    @Override
-    public EntrustResource toResource(Entrust entrust) {
-        return createResourceWithId(entrust.getId(), entrust);
-    }
+  @Override
+  public DoneResource toResource(Done done) {
+    return createResourceWithId(done.getId(), done);
+  }
 
-    @Override
-    protected EntrustResource instantiateResource(Entrust entity) {
-        return new EntrustResource(entity);
-    }
+  @Override
+  protected DoneResource instantiateResource(Done entity) {
+    return new DoneResource(entity);
+  }
 }

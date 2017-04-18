@@ -77,8 +77,7 @@ public class InstructionController {
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.setLocation(
         linkTo(methodOn(InstructionController.class).readInstruction(instruction.getId())).toUri());
-    return new ResponseEntity<Object>(new InstructionResourceAssembler().toResource(instruction),
-        responseHeaders, HttpStatus.CREATED);
+    return new ResponseEntity<Object>(instruction, responseHeaders, HttpStatus.CREATED);
   }
 
   /**
