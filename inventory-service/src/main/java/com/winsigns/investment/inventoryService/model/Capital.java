@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 
 import org.springframework.hateoas.core.Relation;
@@ -20,8 +24,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Relation(value = "fa-capital", collectionRelation = "fa-capitals")
-public class FundAccountCapital extends AbstractEntity {
+@Relation(value = "capital", collectionRelation = "capitals")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "externalCapitalAccountType")
+@DiscriminatorValue("capital")
+public class Capital extends AbstractEntity {
 
   /*
    * 产品账户序号
@@ -29,13 +36,6 @@ public class FundAccountCapital extends AbstractEntity {
   @Getter
   @Setter
   private Long fundAccountId;
-
-  /*
-   * 外部资金账户类型
-   */
-  @Getter
-  @Setter
-  private String externalCapitalAccountType;
 
   /*
    * 币种
@@ -52,11 +52,10 @@ public class FundAccountCapital extends AbstractEntity {
   @Setter
   private Double investmentLimit;
 
-  @OneToMany(mappedBy = "fundAccountCapital", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "capital", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JsonIgnore
   @Getter
   @Setter
-  private List<FundAccountCapitalDetail> fundAccountCapitalDetails =
-      new ArrayList<FundAccountCapitalDetail>();
+  private List<CapitalDetail> capitalDetails = new ArrayList<CapitalDetail>();
 
 }

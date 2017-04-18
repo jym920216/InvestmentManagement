@@ -1,6 +1,7 @@
 package com.winsigns.investment.inventoryService.capital.common;
 
 import com.winsigns.investment.framework.service.IService;
+import com.winsigns.investment.inventoryService.constant.CurrencyCode;
 import com.winsigns.investment.inventoryService.exception.ResourceApplicationExcepiton;
 
 /**
@@ -12,14 +13,13 @@ import com.winsigns.investment.inventoryService.exception.ResourceApplicationExc
 public interface ICapitalService extends IService {
 
   /**
-   * 投资服务申请持仓
+   * 投资服务申请资金
    * 
-   * @param portfolioId
-   * @param securityId
-   * @param type
-   * @param quantity
-   * @return
+   * @param fundAccountId 产品账户
+   * @param currency 币种
+   * @param appliedCapital 申请的资金
+   * @throws ResourceApplicationExcepiton
    */
-  void apply(Long portfolioId, Long securityId, String type, Long quantity)
+  void apply(Long fundAccountId, CurrencyCode currency, Double appliedCapital)
       throws ResourceApplicationExcepiton;
 }

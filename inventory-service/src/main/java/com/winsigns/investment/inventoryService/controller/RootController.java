@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.winsigns.investment.framework.hal.HALResponse;
 import com.winsigns.investment.inventoryService.model.ECACashPool;
-import com.winsigns.investment.inventoryService.model.FundAccountCapital;
-import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
+import com.winsigns.investment.inventoryService.model.Capital;
+import com.winsigns.investment.inventoryService.model.CapitalDetail;
 import com.winsigns.investment.inventoryService.model.Position;
 
 /**
@@ -34,12 +34,12 @@ public class RootController {
         .withRel(ECACashPool.class.getAnnotation(Relation.class).collectionRelation()));
 
     halResponse.add(linkTo(methodOn((FundAccountCapitalController.class)).readFundAccountCapitals())
-        .withRel(FundAccountCapital.class.getAnnotation(Relation.class).collectionRelation()));
+        .withRel(Capital.class.getAnnotation(Relation.class).collectionRelation()));
 
     halResponse.add(
         linkTo(methodOn((FundAccountCapitalDetailController.class)).readFundAccountCapitalDetails())
             .withRel(
-                FundAccountCapitalDetail.class.getAnnotation(Relation.class).collectionRelation()));
+                CapitalDetail.class.getAnnotation(Relation.class).collectionRelation()));
 
     return new ResponseEntity<>(halResponse, HttpStatus.OK);
   }

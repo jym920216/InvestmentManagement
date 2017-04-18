@@ -1,8 +1,12 @@
 package com.winsigns.investment.tradeService.service.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -10,7 +14,10 @@ import com.winsigns.investment.framework.spring.SpringManager;
 import com.winsigns.investment.tradeService.command.CommitInstructionCommand;
 import com.winsigns.investment.tradeService.model.Done;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class TradeServiceManager {
 
   List<ITradeService> services = new ArrayList<ITradeService>();
@@ -41,6 +48,20 @@ public class TradeServiceManager {
       }
     }
     return null;
+  }
+
+  /**
+   * 获取所有的交易服务信息
+   * 
+   * @return 返回服务名和服务支持的方向
+   */
+  public Map<ITradeService, ITradeType[]> getServicesInfo() {
+    Map<ITradeService, ITradeType[]> serviceDetails = new HashMap<ITradeService, ITradeType[]>();
+
+    for (ITradeService service : services) {
+      serviceDetails.put(service, service.getTradeType());
+    }
+    return serviceDetails;
   }
 
   /**
@@ -101,5 +122,14 @@ public class TradeServiceManager {
     ITradeService service = this.getService(thisDone.getEntrust().getTradeService());
 
     service.done(thisDone);
+  }
+
+  /**
+   * 处理
+   */
+  @KafkaListener(topics = {"resource-application"})
+  public void respnseResourceApplication(ConsumerRecord<String, String> record) {
+    log.debug(record.key());
+    log.debug(record.value());
   }
 }

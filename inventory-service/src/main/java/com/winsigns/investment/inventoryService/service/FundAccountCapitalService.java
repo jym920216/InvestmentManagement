@@ -7,45 +7,41 @@ import org.springframework.stereotype.Service;
 
 import com.winsigns.investment.inventoryService.command.CreateFundAccountCapitalCommand;
 import com.winsigns.investment.inventoryService.command.SetInvestmentLimitCommand;
-import com.winsigns.investment.inventoryService.model.FundAccountCapital;
-import com.winsigns.investment.inventoryService.repository.FundAccountCapitalRepository;
+import com.winsigns.investment.inventoryService.model.Capital;
+import com.winsigns.investment.inventoryService.repository.CapitalRepository;
 
 @Service
 public class FundAccountCapitalService {
   @Autowired
-  private FundAccountCapitalRepository fundAccountCapitalRepository;
+  private CapitalRepository fundAccountCapitalRepository;
 
-  public Collection<FundAccountCapital> findAll() {
+  public Collection<Capital> findAll() {
     return fundAccountCapitalRepository.findAll();
   }
 
-  public FundAccountCapital findOne(Long fundAccountCapitalId) {
+  public Capital findOne(Long fundAccountCapitalId) {
     return fundAccountCapitalRepository.findOne(fundAccountCapitalId);
   }
 
-  public FundAccountCapital addFundAccountCapital(
+  public Capital addFundAccountCapital(
       CreateFundAccountCapitalCommand createFundAccountCapitalCommand) {
-    FundAccountCapital fundAccountCapital =
-        fundAccountCapitalRepository.findByFundAccountIdAndExternalCapitalAccountTypeAndCurrency(
-            createFundAccountCapitalCommand.getFundAccountId(),
-            createFundAccountCapitalCommand.getExternalCapitalAccountType(),
-            createFundAccountCapitalCommand.getCurrency());
+    Capital fundAccountCapital = fundAccountCapitalRepository.findByFundAccountIdAndCurrency(
+        createFundAccountCapitalCommand.getFundAccountId(),
+        createFundAccountCapitalCommand.getCurrency());
 
     if (fundAccountCapital == null) {
-      fundAccountCapital = new FundAccountCapital();
+      fundAccountCapital = new Capital();
 
       fundAccountCapital.setFundAccountId(createFundAccountCapitalCommand.getFundAccountId());
-      fundAccountCapital.setExternalCapitalAccountType(
-          createFundAccountCapitalCommand.getExternalCapitalAccountType());
       fundAccountCapital.setCurrency(createFundAccountCapitalCommand.getCurrency());
       fundAccountCapital = fundAccountCapitalRepository.save(fundAccountCapital);
     }
     return fundAccountCapital;
   }
 
-  public FundAccountCapital setInvestmentLimit(Long faCapitalId,
+  public Capital setInvestmentLimit(Long faCapitalId,
       SetInvestmentLimitCommand setInvestmentLimitCommand) {
-    FundAccountCapital fundAccountCapital = fundAccountCapitalRepository.findOne(faCapitalId);
+    Capital fundAccountCapital = fundAccountCapitalRepository.findOne(faCapitalId);
     if (fundAccountCapital == null)
       return null;
     fundAccountCapital.setInvestmentLimit(setInvestmentLimitCommand.getInvestmentLimit());

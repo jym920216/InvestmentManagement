@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.winsigns.investment.framework.integration.AbstractIntegration;
+import com.winsigns.investment.framework.spring.SpringManager;
 
 /**
  * 与trade-service的交互
@@ -17,6 +18,10 @@ public class InvestServiceIntegration extends AbstractIntegration {
   static final String INVEST_SERVICE = "invest-service";
 
   private String instructionURL = "/instructions/%d";
+
+  static public InvestServiceIntegration getInvestServiceIntegration() {
+    return SpringManager.getApplicationContext().getBean(InvestServiceIntegration.class);
+  }
 
   @Override
   public String getIntegrationName() {

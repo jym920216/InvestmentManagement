@@ -69,7 +69,6 @@ public abstract class AbstractTradeService implements ITradeService {
     thisDone.setTradeService(this.getName());
     thisDone.setAppliedCapital(resource.getAppliedCapital());
     thisDone.setAppliedPosition(resource.getAppliedPosition());
-
     thisDone.applyResource();
 
     virtualDoneRepository.save(thisDone);

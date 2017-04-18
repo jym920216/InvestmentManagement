@@ -10,26 +10,25 @@ import com.winsigns.investment.inventoryService.command.AssignAccountCommand;
 import com.winsigns.investment.inventoryService.command.EnfeoffAccountCommand;
 import com.winsigns.investment.inventoryService.controller.FundAccountCapitalController;
 import com.winsigns.investment.inventoryService.controller.FundAccountCapitalDetailController;
-import com.winsigns.investment.inventoryService.model.FundAccountCapital;
-import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
+import com.winsigns.investment.inventoryService.model.Capital;
+import com.winsigns.investment.inventoryService.model.CapitalDetail;
 
 public class FundAccountCapitalDetailResourceAssembler
-    extends ResourceAssemblerSupport<FundAccountCapitalDetail, FundAccountCapitalDetailResource> {
+    extends ResourceAssemblerSupport<CapitalDetail, FundAccountCapitalDetailResource> {
 
   public FundAccountCapitalDetailResourceAssembler() {
     super(FundAccountCapitalDetailController.class, FundAccountCapitalDetailResource.class);
   }
 
   @Override
-  public FundAccountCapitalDetailResource toResource(
-      FundAccountCapitalDetail fundAccountCapitalDetail) {
+  public FundAccountCapitalDetailResource toResource(CapitalDetail fundAccountCapitalDetail) {
 
     FundAccountCapitalDetailResource fundAccountCapitalDetailResource =
         createResourceWithId(fundAccountCapitalDetail.getId(), fundAccountCapitalDetail);
 
     fundAccountCapitalDetailResource.add(linkTo(methodOn(FundAccountCapitalController.class)
-        .readFundAccountCapital(fundAccountCapitalDetail.getFundAccountCapital().getId()))
-            .withRel(FundAccountCapital.class.getAnnotation(Relation.class).value()));
+        .readFundAccountCapital(fundAccountCapitalDetail.getCapital().getId()))
+            .withRel(Capital.class.getAnnotation(Relation.class).value()));
 
     fundAccountCapitalDetailResource.add(linkTo(methodOn(FundAccountCapitalDetailController.class)
         .assignFrom(fundAccountCapitalDetail.getId(), new AssignAccountCommand()))
@@ -49,7 +48,7 @@ public class FundAccountCapitalDetailResourceAssembler
   }
 
   @Override
-  protected FundAccountCapitalDetailResource instantiateResource(FundAccountCapitalDetail entity) {
+  protected FundAccountCapitalDetailResource instantiateResource(CapitalDetail entity) {
     return new FundAccountCapitalDetailResource(entity);
   }
 }

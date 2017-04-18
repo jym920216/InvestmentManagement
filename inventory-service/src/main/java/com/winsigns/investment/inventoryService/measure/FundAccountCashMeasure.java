@@ -12,15 +12,15 @@ import com.winsigns.investment.framework.measure.MeasureHost;
 import com.winsigns.investment.framework.measure.MeasureHostType;
 import com.winsigns.investment.framework.measure.TradingMeasureValue;
 import com.winsigns.investment.framework.model.OperatorEntity;
-import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
-import com.winsigns.investment.inventoryService.repository.FundAccountCapitalDetailRepository;
+import com.winsigns.investment.inventoryService.model.CapitalDetail;
+import com.winsigns.investment.inventoryService.repository.CapitalDetailRepository;
 import com.winsigns.investment.inventoryService.repository.FundAccountCapitalSerialRepository;
 
 @Component
 public class FundAccountCashMeasure extends Measure {
 
   @Autowired
-  FundAccountCapitalDetailRepository fundAccountCapitalDetailRepository;
+  CapitalDetailRepository fundAccountCapitalDetailRepository;
 
   @Autowired
   FundAccountCapitalSerialRepository fundAccountCapitalSerialRepository;
@@ -49,10 +49,10 @@ public class FundAccountCashMeasure extends Measure {
   protected TradingMeasureValue doCalculate(MeasureHost measureHost, boolean isFloat,
       String version) {
 
-    FundAccountCapitalDetail fundAccountCapitalDetail = (FundAccountCapitalDetail) measureHost;
+    CapitalDetail fundAccountCapitalDetail = (CapitalDetail) measureHost;
 
     Double value = fundAccountCapitalSerialRepository
-        .findByFundAccountCapitalDetailAndAssignedDate(fundAccountCapitalDetail, new Date());
+        .findByCapitalDetailAndAssignedDate(fundAccountCapitalDetail, new Date());
 
     return new TradingMeasureValue(fundAccountCapitalDetail, this, isFloat, version, value);
 

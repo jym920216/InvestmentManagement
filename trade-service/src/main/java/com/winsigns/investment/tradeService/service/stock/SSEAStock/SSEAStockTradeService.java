@@ -9,9 +9,9 @@ import com.winsigns.investment.tradeService.model.Done;
 import com.winsigns.investment.tradeService.service.common.AbstractTradeService;
 import com.winsigns.investment.tradeService.service.common.IPriceType;
 import com.winsigns.investment.tradeService.service.common.ITradeType;
-import com.winsigns.investment.tradeService.service.common.MockCapitalService;
-import com.winsigns.investment.tradeService.service.common.MockInvestService;
-import com.winsigns.investment.tradeService.service.common.MockPositionService;
+import com.winsigns.investment.tradeService.service.common.RemoteCapitalService;
+import com.winsigns.investment.tradeService.service.common.RemoteInvestService;
+import com.winsigns.investment.tradeService.service.common.RemotePositionService;
 import com.winsigns.investment.tradeService.service.common.Resource;
 import com.winsigns.investment.tradeService.service.stock.StockInvestService;
 import com.winsigns.investment.tradeService.service.stock.StockTradeType;
@@ -23,18 +23,18 @@ public class SSEAStockTradeService extends AbstractTradeService {
   StockInvestService investService;
 
   @Override
-  public MockInvestService getSupportedInvestService() {
+  public RemoteInvestService getSupportedInvestService() {
     return investService;
   }
 
   @Override
-  public MockCapitalService getUsedCapitalService() {
-    return new MockCapitalService("CHINA_GENERAL_CAPITAL", CurrencyCode.CNY);
+  public RemoteCapitalService getUsedCapitalService() {
+    return new RemoteCapitalService("CHINA_GENERAL_CAPITAL", CurrencyCode.CNY);
   }
 
   @Override
-  public MockPositionService getUsedPositionService() {
-    return new MockPositionService("SSEAStockPositionService");
+  public RemotePositionService getUsedPositionService() {
+    return new RemotePositionService("SSEAStockPositionService");
   }
 
   @Override

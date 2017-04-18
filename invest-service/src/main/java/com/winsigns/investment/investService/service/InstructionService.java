@@ -15,6 +15,7 @@ import com.winsigns.investment.investService.constant.InstructionMessageCode;
 import com.winsigns.investment.investService.constant.InstructionMessageType;
 import com.winsigns.investment.investService.constant.InstructionOperatorType;
 import com.winsigns.investment.investService.constant.InstructionStatus;
+import com.winsigns.investment.investService.constant.InstructionVolumeType;
 import com.winsigns.investment.investService.integration.FundServiceIntegration;
 import com.winsigns.investment.investService.model.Instruction;
 import com.winsigns.investment.investService.model.InstructionMessage;
@@ -126,6 +127,7 @@ public class InstructionService {
     }
     checkPortfolio(thisInstruction);
     checkSecurityAndDirection(thisInstruction);
+    checkVolumeType(thisInstruction);
     // return instructionRepository.save(thisInstruction);
   }
 
@@ -173,6 +175,19 @@ public class InstructionService {
     if (thisInstruction.getInvestType() == null) {
       thisInstruction.addInstructionMessage(new InstructionMessage(thisInstruction, "investType",
           InstructionMessageType.ERROR, InstructionMessageCode.INVEST_TYPE_CANNOT_NULL));
+    }
+  }
+
+  /**
+   * 检查数量类型是否匹配
+   * 
+   * @param thisInstruction
+   */
+  protected void checkVolumeType(Instruction thisInstruction) {
+    if (!InstructionVolumeType.contains(thisInstruction.getVolumeType())) {
+      thisInstruction.addInstructionMessage(
+          new InstructionMessage(thisInstruction, "volumeType", InstructionMessageType.ERROR,
+              InstructionMessageCode.INSTRUCTION_VOLUME_TYPE_NOT_SUPPORT));
     }
   }
 

@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class MockPositionService {
+public class RemotePositionService {
 
   String name;
 

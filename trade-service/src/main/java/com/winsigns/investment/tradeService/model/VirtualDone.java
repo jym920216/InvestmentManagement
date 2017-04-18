@@ -84,7 +84,6 @@ public class VirtualDone extends OperatorEntity {
 
     ApplyResourceCommand applyCmd = new ApplyResourceCommand();
     applyCmd.setOperatorSequence(getOperatorSequence());
-
     applyCmd.setPortfolioId(this.getPortfolioId());
     applyCmd.setSecurityId(this.getSecurityId());
     applyCmd.setCurrency(this.getCurrency());

@@ -8,9 +8,13 @@ import org.springframework.util.Assert;
 
 import com.winsigns.investment.tradeService.command.CreateEntrustCommand;
 import com.winsigns.investment.tradeService.command.UpdateEntrustCommand;
+import com.winsigns.investment.tradeService.constant.EntrustMessageCode;
+import com.winsigns.investment.tradeService.constant.EntrustMessageType;
 import com.winsigns.investment.tradeService.constant.EntrustStatus;
 import com.winsigns.investment.tradeService.integration.InvestServiceIntegration;
 import com.winsigns.investment.tradeService.model.Entrust;
+import com.winsigns.investment.tradeService.model.EntrustMessage;
+import com.winsigns.investment.tradeService.repository.EntrustMessageRepository;
 import com.winsigns.investment.tradeService.repository.EntrustRepository;
 
 /**
@@ -32,6 +36,9 @@ public class EntrustService {
 
   @Autowired
   InvestServiceIntegration investService;
+
+  @Autowired
+  EntrustMessageRepository entrustMessageRepository;
 
   /**
    * 根据条件查询指定指令下的未删除的委托
@@ -75,6 +82,8 @@ public class EntrustService {
     newEntrust.setInstructionId(command.getInstructionId());;
     newEntrust.setSecurityId(investService.getInstructionSecurityId(command.getInstructionId()));
 
+    newEntrust = entrustRepository.save(newEntrust);
+    check(newEntrust);
     return entrustRepository.save(newEntrust);
   }
 
@@ -85,13 +94,46 @@ public class EntrustService {
    * @param command
    * @return
    */
-  public Entrust updateEntrust(Long entrustId, UpdateEntrustCommand command) {
+  public Entrust updateEntrust(UpdateEntrustCommand command) {
+    Long entrustId = command.getEntrustId();
     Assert.notNull(entrustId);
     Entrust thisEntrust = entrustRepository.findOne(entrustId);
     Assert.notNull(thisEntrust);
 
-
+    thisEntrust.setTradeService(command.getTradeService());
+    thisEntrust.setTradeType(command.getTradeType());
+    thisEntrust.setBrokerageFirmId(command.getBrokerageFirmId());
+    thisEntrust.setPriceType(command.getPriceType());
+    thisEntrust.setEntrustPrice(command.getEntrustPrice());
+    thisEntrust.setEntrustQuantity(command.getEntrustQuantity());
+    check(thisEntrust);
     return entrustRepository.save(thisEntrust);
+  }
+
+  protected void check(Entrust thisEntrust) {
+    if (!thisEntrust.getMessages().isEmpty()) {
+      entrustMessageRepository.delete(thisEntrust.getMessages());
+      thisEntrust.getMessages().clear();
+    }
+    checkSecurityAndDirection(thisEntrust);
+  }
+
+  /**
+   * 检查委托的交易类型
+   * 
+   * @param thisInstruction
+   */
+  protected void checkSecurityAndDirection(Entrust thisEntrust) {
+
+    if (thisEntrust.getTradeService() == null) {
+      thisEntrust.addEntrustMessage(new EntrustMessage(thisEntrust, "tradeService",
+          EntrustMessageType.ERROR, EntrustMessageCode.TRADE_SERVICE_CANNOT_NULL));
+    }
+
+    if (thisEntrust.getTradeType() == null) {
+      thisEntrust.addEntrustMessage(new EntrustMessage(thisEntrust, "tradeType",
+          EntrustMessageType.ERROR, EntrustMessageCode.TRADE_TYPE_CANNOT_NULL));
+    }
   }
 
   /**

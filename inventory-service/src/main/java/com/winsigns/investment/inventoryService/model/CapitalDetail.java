@@ -20,21 +20,37 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Relation(value = "fa-capital-detail", collectionRelation = "fa-capital-details")
-public class FundAccountCapitalDetail extends MeasureHost {
+@Relation(value = "capital-detail", collectionRelation = "capital-details")
+public class CapitalDetail extends MeasureHost {
 
+  // 具体的资金服务的资金
   @ManyToOne
   @JsonIgnore
   @Getter
   @Setter
-  private FundAccountCapital fundAccountCapital;
+  private Capital capital;
 
+  // 外部资金账户id
   @Getter
   @Setter
   private Long externalCapitalAccountId;
 
-  @OneToMany(mappedBy = "fundAccountCapitalDetail", cascade = CascadeType.ALL,
-      fetch = FetchType.LAZY)
+  // 现金
+  @Getter
+  @Setter
+  private Double cash;
+
+  // 可用资金
+  @Getter
+  @Setter
+  private Double availableCapital;
+
+  // 可取资金
+  @Getter
+  @Setter
+  private Double desirableCapital;
+
+  @OneToMany(mappedBy = "capitalDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JsonIgnore
   List<FundAccountCapitalSerial> fundAccountCapitalSerials =
       new ArrayList<FundAccountCapitalSerial>();
@@ -48,5 +64,20 @@ public class FundAccountCapitalDetail extends MeasureHost {
   public MeasureHost parent() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  public Double changeCash(Double cash) {
+    this.cash += cash;
+    return this.cash;
+  }
+
+  public Double changeAvailableCapital(Double availableCapital) {
+    this.availableCapital += availableCapital;
+    return this.availableCapital;
+  }
+
+  public Double changeDesirableCapital(Double desirableCapital) {
+    this.desirableCapital += desirableCapital;
+    return this.desirableCapital;
   }
 }

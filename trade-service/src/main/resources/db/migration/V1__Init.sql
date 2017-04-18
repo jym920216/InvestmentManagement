@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS done;
+DROP TABLE IF EXISTS entrust_message;
 DROP TABLE IF EXISTS entrust;
 DROP TABLE IF EXISTS virtual_done;
 
@@ -50,3 +51,15 @@ CREATE TABLE virtual_done
 	operator_sequence BIGINT,
 	PRIMARY KEY (id)
 )CHARACTER SET = utf8;
+
+CREATE TABLE entrust_message
+(
+	id BIGINT NOT NULL auto_increment,
+	entrust_id BIGINT,
+	field_name VARCHAR(255),
+	message_type VARCHAR(255),
+	message_code VARCHAR(255),
+	PRIMARY KEY (id)
+)CHARACTER SET = utf8;
+
+ALTER TABLE entrust_message ADD CONSTRAINT fk_entrust FOREIGN KEY (entrust_id) REFERENCES entrust (id);

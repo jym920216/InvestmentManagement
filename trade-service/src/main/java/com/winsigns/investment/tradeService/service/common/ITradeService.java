@@ -27,19 +27,19 @@ public interface ITradeService {
    * 
    * @return 所支持的投资服务
    */
-  MockInvestService getSupportedInvestService();
+  RemoteInvestService getSupportedInvestService();
 
   /**
    * 
    * @return 所使用的资金服务
    */
-  MockCapitalService getUsedCapitalService();
+  RemoteCapitalService getUsedCapitalService();
 
   /**
    * 
    * @return 所使用的持仓服务
    */
-  MockPositionService getUsedPositionService();
+  RemotePositionService getUsedPositionService();
 
   /**
    * 投资标的

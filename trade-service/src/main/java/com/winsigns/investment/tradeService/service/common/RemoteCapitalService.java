@@ -13,7 +13,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class MockCapitalService {
+public class RemoteCapitalService {
 
   String name;
 

@@ -16,6 +16,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import com.winsigns.investment.inventoryService.capital.common.CapitalServiceManager;
+import com.winsigns.investment.inventoryService.capital.common.ICapitalService;
 import com.winsigns.investment.inventoryService.command.ApplyResourceCommand;
 import com.winsigns.investment.inventoryService.exception.ResourceApplicationExcepiton;
 import com.winsigns.investment.inventoryService.integration.FundServiceIntegration;
@@ -69,6 +71,9 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
 
   @Autowired
   PositionServiceManager positionServiceManager;
+
+  @Autowired
+  CapitalServiceManager capitalServiceManager;
 
   @Autowired
   KafkaTemplate kafkaTemplate;
@@ -162,11 +167,19 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
       positionService.apply(form.getPortfolioId(), form.getSecurityId(), null,
           form.getAppliedPosition());
 
-      kafkaTemplate.send(applyTopic, "test", "true");
+      ICapitalService capitalService = capitalServiceManager.getService(form.getCapitalService());
+      if (capitalService == null) {
+        throw new ResourceApplicationExcepiton(ErrorCode.NOT_SUPPORT_CAPITAL_SERVICE.toString());
+      }
+
+      capitalService.apply(fundServiceIntegration.getFundAccountId(form.getPortfolioId()),
+          form.getCurrency(), form.getAppliedCapital());
+
+      kafkaTemplate.send(applyTopic, "true", "true");
 
     } catch (ResourceApplicationExcepiton e) {
 
-      kafkaTemplate.send(applyTopic, "test", e.getMessage());
+      kafkaTemplate.send(applyTopic, "false", e.getMessage());
     }
 
   }

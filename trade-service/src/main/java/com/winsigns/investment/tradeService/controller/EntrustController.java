@@ -85,8 +85,8 @@ public class EntrustController {
   @PutMapping("/{entrustId}")
   public EntrustResource updateEntrust(@PathVariable Long entrustId,
       @RequestBody UpdateEntrustCommand command) {
-    return new EntrustResourceAssembler()
-        .toResource(entrustService.updateEntrust(entrustId, command));
+    command.setEntrustId(entrustId);
+    return new EntrustResourceAssembler().toResource(entrustService.updateEntrust(command));
   }
 
   /**

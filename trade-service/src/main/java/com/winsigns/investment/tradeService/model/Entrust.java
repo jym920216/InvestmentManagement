@@ -92,4 +92,15 @@ public class Entrust extends AbstractEntity {
   @OneToMany(mappedBy = "entrust", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JsonIgnore
   private List<Done> dones = new ArrayList<Done>();
+
+  // 委托信息
+  @OneToMany(mappedBy = "entrust", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonIgnore
+  @Setter
+  @Getter
+  private List<EntrustMessage> messages = new ArrayList<EntrustMessage>();
+
+  public void addEntrustMessage(EntrustMessage message) {
+    this.messages.add(message);
+  }
 }
