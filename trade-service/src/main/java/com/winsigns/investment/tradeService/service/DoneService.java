@@ -75,10 +75,9 @@ public class DoneService {
     return doneRepository.save(newDone);
   }
 
-  public List<Done> findByEntrust(Long entrustId) {
-    Assert.notNull(entrustId);
-    Entrust entrust = entrustRepository.findOne(entrustId);
+  public List<Done> findByEntrust(Entrust entrust) {
     Assert.notNull(entrust);
+    doneRepository.findByEntrustOrderByDoneTimeDesc(entrust);
     return entrust.getDones();
   }
 

@@ -34,6 +34,9 @@ public class EntrustResource extends HALResponse<Entrust> {
   protected final String statusLabel;
 
   @Getter
+  protected final String priceTypeLabel;
+
+  @Getter
   protected final List<Item> supportedOperator = new ArrayList<Item>();
 
   @Getter
@@ -65,6 +68,11 @@ public class EntrustResource extends HALResponse<Entrust> {
     ITradeService service = getTradeServiceManager().getService(entrust.getTradeService());
     if (service != null) {
       this.tradeServiceLabel = service.getSimpleName();
+      if (service.getPriceType(entrust.getPriceType()) != null) {
+        this.priceTypeLabel = service.getPriceType(entrust.getPriceType()).i18n();
+      } else {
+        this.priceTypeLabel = null;
+      }
       if (service.getTradeType(entrust.getTradeType()) != null) {
         this.tradeTypeLabel = service.getTradeType(entrust.getTradeType()).i18n();
       } else {
@@ -73,7 +81,9 @@ public class EntrustResource extends HALResponse<Entrust> {
     } else {
       this.tradeServiceLabel = null;
       this.tradeTypeLabel = null;
+      this.priceTypeLabel = null;
     }
+
     // 2.状态支持的操作
     for (EntrustOperatorType type : entrust.getStatus().getSupportedOperator()) {
       this.supportedOperator.add(new Item(type.name(), type.i18n()));

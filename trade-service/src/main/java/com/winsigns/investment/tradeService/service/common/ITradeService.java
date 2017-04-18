@@ -15,31 +15,31 @@ public interface ITradeService {
    *
    * @return 服务名称
    */
-  String getName();
+  public String getName();
 
   /**
    * 
    * @return 服务简称
    */
-  String getSimpleName();
+  public String getSimpleName();
 
   /**
    * 
    * @return 所支持的投资服务
    */
-  RemoteInvestService getSupportedInvestService();
+  public RemoteInvestService getSupportedInvestService();
 
   /**
    * 
    * @return 所使用的资金服务
    */
-  RemoteCapitalService getUsedCapitalService();
+  public RemoteCapitalService getUsedCapitalService();
 
   /**
    * 
    * @return 所使用的持仓服务
    */
-  RemotePositionService getUsedPositionService();
+  public RemotePositionService getUsedPositionService();
 
   /**
    * 投资标的
@@ -47,13 +47,13 @@ public interface ITradeService {
    * @return
    */
   // TODO
-  String getSupportedSecurity();
+  public String getSupportedSecurity();
 
   /**
    * 
    * @return 交易类型
    */
-  ITradeType[] getTradeType();
+  public ITradeType[] getTradeType();
 
   /**
    * 获取指定名字的交易类型
@@ -61,14 +61,21 @@ public interface ITradeService {
    * @param name 名字
    * @return
    */
-  ITradeType getTradeType(String name);
+  public ITradeType getTradeType(String name);
 
   /**
    * 价格类型
    * 
    * @return
    */
-  IPriceType[] getPriceType();
+  public IPriceType[] getPriceType();
+
+  /**
+   * 价格类型
+   * 
+   * @return
+   */
+  public IPriceType getPriceType(String name);
 
   /**
    * 计算指令需要的资源
@@ -76,18 +83,18 @@ public interface ITradeService {
    * @param command
    * @return
    */
-  Resource calculateRequiredResource(CommitInstructionCommand command);
+  public Resource calculateRequiredResource(CommitInstructionCommand command);
 
   /**
    * 虚拟成交
    */
-  void virtualDone(CommitInstructionCommand command, Resource resource);
+  public void virtualDone(CommitInstructionCommand command, Resource resource);
 
   /**
    * 成交信息
    * 
    * @param thisDone
    */
-  void done(Done thisDone);
+  public void done(Done thisDone);
 
 }

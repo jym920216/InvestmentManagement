@@ -97,5 +97,5 @@ service discovery with Eureka
 /entrusts GET/POST
 /entrusts/{entrustId} GET/PUT/POST/DELETE
 
-/dones GET
+/dones/{doneId} GET
 ```

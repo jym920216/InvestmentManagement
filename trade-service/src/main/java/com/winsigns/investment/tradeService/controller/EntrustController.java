@@ -7,10 +7,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.core.Relation;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +82,18 @@ public class EntrustController {
    */
   @GetMapping("/{entrustId}")
   public EntrustResource readEntrust(@PathVariable Long entrustId) {
-    return new EntrustResourceAssembler().toResource(entrustService.readEntrust(entrustId));
+
+    Entrust entrust = entrustService.readEntrust(entrustId);
+    EntrustResource resource = new EntrustResourceAssembler().toResource(entrust);
+
+    // 增加内嵌的成交
+    List<Done> dones = doneService.findByEntrust(entrust);
+    if (!dones.isEmpty()) {
+      resource.add(Done.class.getAnnotation(Relation.class).collectionRelation(),
+          new DoneResourceAssembler().toResources(dones));
+    }
+
+    return resource;
   }
 
   /**

@@ -56,6 +56,16 @@ public abstract class AbstractTradeService implements ITradeService {
   }
 
   @Override
+  public IPriceType getPriceType(String name) {
+    for (IPriceType type : this.getPriceType()) {
+      if (type.name().equals(name)) {
+        return type;
+      }
+    }
+    return null;
+  }
+
+  @Override
   public void virtualDone(CommitInstructionCommand command, Resource resource) {
 
     VirtualDone thisDone = new VirtualDone();
