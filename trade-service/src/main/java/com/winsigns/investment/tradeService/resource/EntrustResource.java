@@ -87,9 +87,11 @@ public class EntrustResource extends HALResponse<Entrust> {
       }
     }
     // 4.支持的价格类型
-    IPriceType[] priceTypes = service.getPriceType();
-    for (int i = 0; i < priceTypes.length; ++i) {
-      this.supportPriceType.add(new Item(priceTypes[i].name(), priceTypes[i].i18n()));
+    if (service != null) {
+      IPriceType[] priceTypes = service.getPriceType();
+      for (int i = 0; i < priceTypes.length; ++i) {
+        this.supportPriceType.add(new Item(priceTypes[i].name(), priceTypes[i].i18n()));
+      }
     }
   }
 
