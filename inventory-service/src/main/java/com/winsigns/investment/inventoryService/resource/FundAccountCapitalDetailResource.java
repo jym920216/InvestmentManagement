@@ -1,11 +1,11 @@
 package com.winsigns.investment.inventoryService.resource;
 
 import com.winsigns.investment.framework.hal.HALResponse;
-import com.winsigns.investment.inventoryService.model.CapitalDetail;
+import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
 
-public class FundAccountCapitalDetailResource extends HALResponse<CapitalDetail> {
+public class FundAccountCapitalDetailResource extends HALResponse<FundAccountCapitalDetail> {
 
-  public FundAccountCapitalDetailResource(CapitalDetail fundAccountCapitalDetail) {
+  public FundAccountCapitalDetailResource(FundAccountCapitalDetail fundAccountCapitalDetail) {
     super(fundAccountCapitalDetail);
   }
 

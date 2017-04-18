@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.winsigns.investment.inventoryService.constant.CurrencyCode;
 
-public interface GeneralCapitalRepository extends JpaRepository<GeneralCapital, Long> {
+public interface GeneralCapitalRepository extends JpaRepository<GeneralCapitalPool, Long> {
 
-  public GeneralCapital findByFundAccountIdAndCurrency(Long fundAccountId, CurrencyCode currency);
+  public GeneralCapitalPool findByFundAccountIdAndCurrency(Long fundAccountId, CurrencyCode currency);
 
 }

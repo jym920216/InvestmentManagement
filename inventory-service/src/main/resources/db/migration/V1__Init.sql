@@ -1,28 +1,29 @@
 DROP TABLE IF EXISTS fund_account_capital_serial;
 DROP TABLE IF EXISTS eca_cash_serial;
-DROP TABLE IF EXISTS capital_detail;
-DROP TABLE IF EXISTS capital;
+DROP TABLE IF EXISTS fund_account_capital_detail;
+DROP TABLE IF EXISTS fund_account_capital_pool;
 DROP TABLE IF EXISTS external_capital_account_cash_pool;
 DROP TABLE IF EXISTS position;
 
 --建表
---资金
-CREATE TABLE capital
+--产品账户资金池
+CREATE TABLE fund_account_capital_pool
 (
 	id BIGINT NOT NULL auto_increment,
+	dtype VARCHAR(64) NOT NULL,
 	fund_account_id BIGINT NOT NULL,
 	investment_limit DOUBLE PRECISION,
 	currency VARCHAR(4) NOT NULL,
-	external_capital_account_type VARCHAR(64) NOT NULL,
+	account_type VARCHAR(64) NOT NULL,
 	PRIMARY KEY (id)
 )CHARACTER SET = utf8;
 
---资金明细
-CREATE TABLE capital_detail
+--产品账户资金明细
+CREATE TABLE fund_account_capital_detail
 (
 	id BIGINT NOT NULL auto_increment,
 	external_capital_account_id BIGINT NOT NULL,
-	fund_account_capital_id BIGINT NOT NULL,
+	fund_account_capital_pool_id BIGINT NOT NULL,
 	cash DOUBLE PRECISION,
 	available_capital DOUBLE PRECISION,
 	desirable_capital DOUBLE PRECISION,
@@ -80,6 +81,6 @@ CREATE TABLE position
 	PRIMARY KEY (id)
 )CHARACTER SET = utf8;
 --外键
-ALTER TABLE capital_detail ADD CONSTRAINT fk_fund_account_capital FOREIGN KEY (fund_account_capital_id) REFERENCES capital (id);
+ALTER TABLE fund_account_capital_detail ADD CONSTRAINT fk_fund_account_capital_pool FOREIGN KEY (fund_account_capital_pool_id) REFERENCES fund_account_capital_pool (id);
 ALTER TABLE fund_account_capital_serial ADD CONSTRAINT fk_fund_account_capital_detail FOREIGN KEY (fund_account_capital_detail_id) REFERENCES capital_detail (id);
 ALTER TABLE eca_cash_serial ADD CONSTRAINT fk_eca_cash_serial FOREIGN KEY (eca_cash_pool_id) REFERENCES external_capital_account_cash_pool (id);

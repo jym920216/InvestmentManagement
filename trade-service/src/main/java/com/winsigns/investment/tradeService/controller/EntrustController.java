@@ -61,7 +61,8 @@ public class EntrustController {
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.setLocation(
         linkTo(methodOn(EntrustController.class).readEntrust(entrust.getId())).toUri());
-    return new ResponseEntity<Object>(entrust, responseHeaders, HttpStatus.CREATED);
+    return new ResponseEntity<Object>(new EntrustResourceAssembler().toResource(entrust),
+        responseHeaders, HttpStatus.CREATED);
   }
 
   /**

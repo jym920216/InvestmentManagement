@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.winsigns.investment.inventoryService.command.AssignAccountCommand;
 import com.winsigns.investment.inventoryService.command.EnfeoffAccountCommand;
-import com.winsigns.investment.inventoryService.model.CapitalDetail;
+import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
 import com.winsigns.investment.inventoryService.resource.FundAccountCapitalDetailResource;
 import com.winsigns.investment.inventoryService.resource.FundAccountCapitalDetailResourceAssembler;
 import com.winsigns.investment.inventoryService.service.FundAccountCapitalDetailService;
@@ -43,7 +43,7 @@ public class FundAccountCapitalDetailController {
   @GetMapping("/{faCapitalDetailId}")
   public FundAccountCapitalDetailResource readFundAccountCapitalDetail(
       @PathVariable Long faCapitalDetailId) {
-    CapitalDetail fundAccountCapitalDetail =
+    FundAccountCapitalDetail fundAccountCapitalDetail =
         fundAccountCapitalDetailService.findOne(faCapitalDetailId);
     FundAccountCapitalDetailResource fundAccountCapitalResource =
         new FundAccountCapitalDetailResourceAssembler().toResource(fundAccountCapitalDetail);

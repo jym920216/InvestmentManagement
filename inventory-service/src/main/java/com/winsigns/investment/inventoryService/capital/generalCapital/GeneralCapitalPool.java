@@ -5,11 +5,11 @@ import javax.persistence.Entity;
 
 import org.springframework.hateoas.core.Relation;
 
-import com.winsigns.investment.inventoryService.model.Capital;
+import com.winsigns.investment.inventoryService.model.FundAccountCapitalPool;
 
 @Entity
 @Relation(value = "capital", collectionRelation = "capitals")
-@DiscriminatorValue("CHINA_GENERAL_CAPITAL_ACCOUNT")
-public class GeneralCapital extends Capital {
+@DiscriminatorValue("general_capital_pool")
+public class GeneralCapitalPool extends FundAccountCapitalPool {
 
 }

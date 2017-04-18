@@ -26,7 +26,7 @@ public class FundAccountCapitalSerial extends OperatorEntity {
   @JsonIgnore
   @Getter
   @Setter
-  private CapitalDetail capitalDetail;
+  private FundAccountCapitalDetail capitalDetail;
 
   @Getter
   @Setter

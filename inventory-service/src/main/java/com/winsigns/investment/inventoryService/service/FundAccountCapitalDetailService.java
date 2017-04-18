@@ -11,22 +11,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.winsigns.investment.inventoryService.command.AssignAccountCommand;
 import com.winsigns.investment.inventoryService.command.CreateFundAccountCapitalDetailCommand;
-import com.winsigns.investment.inventoryService.model.Capital;
-import com.winsigns.investment.inventoryService.model.CapitalDetail;
 import com.winsigns.investment.inventoryService.model.ECACashPool;
 import com.winsigns.investment.inventoryService.model.ECACashSerial;
+import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
+import com.winsigns.investment.inventoryService.model.FundAccountCapitalPool;
 import com.winsigns.investment.inventoryService.model.FundAccountCapitalSerial;
-import com.winsigns.investment.inventoryService.repository.CapitalDetailRepository;
-import com.winsigns.investment.inventoryService.repository.CapitalRepository;
 import com.winsigns.investment.inventoryService.repository.ECACashPoolRepository;
+import com.winsigns.investment.inventoryService.repository.FundAccountCapitalDetailRepository;
+import com.winsigns.investment.inventoryService.repository.FundAccountCapitalPoolRepository;
 
 @Service
 public class FundAccountCapitalDetailService {
   @Autowired
-  private CapitalDetailRepository fundAccountCapitalDetailRepository;
+  private FundAccountCapitalDetailRepository fundAccountCapitalDetailRepository;
 
   @Autowired
-  private CapitalRepository fundAccountCapitalRepository;
+  private FundAccountCapitalPoolRepository fundAccountCapitalRepository;
 
   @Autowired
   private ECACashPoolRepository ecaCashPoolRepository;
@@ -34,47 +34,48 @@ public class FundAccountCapitalDetailService {
   /*
    * 查询所有产品账户资金明细
    */
-  public Collection<CapitalDetail> findAll() {
+  public Collection<FundAccountCapitalDetail> findAll() {
     return fundAccountCapitalDetailRepository.findAll();
   }
 
   /*
    * 查询特定产品账户资金的明细
    */
-  public Collection<CapitalDetail> findByFACapitalId(Long faCapitalId) {
+  public Collection<FundAccountCapitalDetail> findByFACapitalId(Long faCapitalId) {
 
-    Capital fundAccountCapital = fundAccountCapitalRepository.findOne(faCapitalId);
+    FundAccountCapitalPool fundAccountCapital = fundAccountCapitalRepository.findOne(faCapitalId);
     if (fundAccountCapital == null)
       return null;
 
-    return fundAccountCapitalDetailRepository.findByCapital(fundAccountCapital);
+    return fundAccountCapitalDetailRepository.findByCapitalPool(fundAccountCapital);
   }
 
   /*
    * 查询特定产品账户资金明细
    */
-  public CapitalDetail findOne(Long fundAccountCapitalDetailId) {
+  public FundAccountCapitalDetail findOne(Long fundAccountCapitalDetailId) {
     return fundAccountCapitalDetailRepository.findOne(fundAccountCapitalDetailId);
   }
 
   /*
    * 增加产品账户明细
    */
-  public CapitalDetail addFundAccountCapitalDetail(Long fundAccountCapitalId,
+  public FundAccountCapitalDetail addFundAccountCapitalDetail(Long fundAccountCapitalId,
       CreateFundAccountCapitalDetailCommand crtFundAccountCapitalDetailCmd) {
 
-    Capital fundAccountCapital = fundAccountCapitalRepository.findOne(fundAccountCapitalId);
+    FundAccountCapitalPool fundAccountCapital =
+        fundAccountCapitalRepository.findOne(fundAccountCapitalId);
     if (fundAccountCapital == null)
       return null;
 
-    CapitalDetail fundAccountCapitalDetail =
-        fundAccountCapitalDetailRepository.findByCapitalAndExternalCapitalAccountId(
+    FundAccountCapitalDetail fundAccountCapitalDetail =
+        fundAccountCapitalDetailRepository.findByCapitalPoolAndExternalCapitalAccountId(
             fundAccountCapital, crtFundAccountCapitalDetailCmd.getExternalCapitalAccountId());
 
     if (fundAccountCapitalDetail == null) {
-      fundAccountCapitalDetail = new CapitalDetail();
+      fundAccountCapitalDetail = new FundAccountCapitalDetail();
 
-      fundAccountCapitalDetail.setCapital(fundAccountCapital);
+      fundAccountCapitalDetail.setCapitalPool(fundAccountCapital);
       fundAccountCapitalDetail.setExternalCapitalAccountId(
           crtFundAccountCapitalDetailCmd.getExternalCapitalAccountId());
 
@@ -86,9 +87,9 @@ public class FundAccountCapitalDetailService {
   /*
    * 从外部资金账户资金池分配资金到产品账户资金明细中
    */
-  public CapitalDetail assignFrom(Long faCapitalDetailId,
+  public FundAccountCapitalDetail assignFrom(Long faCapitalDetailId,
       AssignAccountCommand assignAccountCommand) {
-    CapitalDetail fundAccountCapitalDetail =
+    FundAccountCapitalDetail fundAccountCapitalDetail =
         fundAccountCapitalDetailRepository.findOne(faCapitalDetailId);
     if (fundAccountCapitalDetail == null)
       return null;
@@ -123,8 +124,9 @@ public class FundAccountCapitalDetailService {
   /*
    * 从产品账户资金明细归还资金到外部资金账户资金池中
    */
-  public CapitalDetail assignTo(Long faCapitalDetailId, AssignAccountCommand assignAccountCommand) {
-    CapitalDetail fundAccountCapitalDetail =
+  public FundAccountCapitalDetail assignTo(Long faCapitalDetailId,
+      AssignAccountCommand assignAccountCommand) {
+    FundAccountCapitalDetail fundAccountCapitalDetail =
         fundAccountCapitalDetailRepository.findOne(faCapitalDetailId);
     if (fundAccountCapitalDetail == null)
       return null;
@@ -158,23 +160,23 @@ public class FundAccountCapitalDetailService {
    * 产品账户之间的资金互转
    */
   @Transactional
-  public Collection<CapitalDetail> enfeoff(Long dstFACapitalDetailId, Long srcFACapitalDetailId,
-      Double assignedCash) {
+  public Collection<FundAccountCapitalDetail> enfeoff(Long dstFACapitalDetailId,
+      Long srcFACapitalDetailId, Double assignedCash) {
 
-    List<CapitalDetail> result = new ArrayList<CapitalDetail>();
+    List<FundAccountCapitalDetail> result = new ArrayList<FundAccountCapitalDetail>();
 
-    CapitalDetail dstFundAccountCapitalDetail =
+    FundAccountCapitalDetail dstFundAccountCapitalDetail =
         fundAccountCapitalDetailRepository.findOne(dstFACapitalDetailId);
     if (dstFundAccountCapitalDetail == null)
       return null;
 
-    CapitalDetail srcFundAccountCapitalDetail =
+    FundAccountCapitalDetail srcFundAccountCapitalDetail =
         fundAccountCapitalDetailRepository.findOne(srcFACapitalDetailId);
     if (srcFundAccountCapitalDetail == null)
       return null;
 
-    if (dstFundAccountCapitalDetail.getCapital().getCurrency() != srcFundAccountCapitalDetail
-        .getCapital().getCurrency())
+    if (dstFundAccountCapitalDetail.getCapitalPool().getCurrency() != srcFundAccountCapitalDetail
+        .getCapitalPool().getCurrency())
       return null;
 
     FundAccountCapitalSerial dstfundAccountCapitalSerial = new FundAccountCapitalSerial();

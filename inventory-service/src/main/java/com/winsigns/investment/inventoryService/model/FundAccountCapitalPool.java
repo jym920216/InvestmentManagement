@@ -19,6 +19,7 @@ import org.springframework.hateoas.core.Relation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winsigns.investment.framework.model.AbstractEntity;
 import com.winsigns.investment.inventoryService.constant.CurrencyCode;
+import com.winsigns.investment.inventoryService.constant.ExternalCapitalAccountType;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,9 +27,9 @@ import lombok.Setter;
 @Entity
 @Relation(value = "capital", collectionRelation = "capitals")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "externalCapitalAccountType")
-@DiscriminatorValue("capital")
-public class Capital extends AbstractEntity {
+@DiscriminatorColumn
+@DiscriminatorValue("capital_pool")
+public class FundAccountCapitalPool extends AbstractEntity {
 
   /*
    * 产品账户序号
@@ -45,6 +46,13 @@ public class Capital extends AbstractEntity {
   @Enumerated(EnumType.STRING)
   private CurrencyCode currency;
 
+  /**
+   * 账户类型
+   */
+  @Getter
+  @Setter
+  private ExternalCapitalAccountType accountType;
+
   /*
    * 投资限额
    */
@@ -52,10 +60,10 @@ public class Capital extends AbstractEntity {
   @Setter
   private Double investmentLimit;
 
-  @OneToMany(mappedBy = "capital", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "capitalPool", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JsonIgnore
   @Getter
   @Setter
-  private List<CapitalDetail> capitalDetails = new ArrayList<CapitalDetail>();
+  private List<FundAccountCapitalDetail> details = new ArrayList<FundAccountCapitalDetail>();
 
 }

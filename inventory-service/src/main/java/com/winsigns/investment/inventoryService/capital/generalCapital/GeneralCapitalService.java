@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.winsigns.investment.inventoryService.capital.common.AbstractCapitalService;
+import com.winsigns.investment.inventoryService.command.CreateFundAccountCapitalPoolCommand;
 import com.winsigns.investment.inventoryService.constant.CurrencyCode;
+import com.winsigns.investment.inventoryService.constant.ExternalCapitalAccountType;
 import com.winsigns.investment.inventoryService.exception.ResourceApplicationExcepiton;
-import com.winsigns.investment.inventoryService.model.CapitalDetail;
-import com.winsigns.investment.inventoryService.repository.CapitalDetailRepository;
+import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
+import com.winsigns.investment.inventoryService.model.FundAccountCapitalPool;
+import com.winsigns.investment.inventoryService.repository.FundAccountCapitalDetailRepository;
 
 @Service
 public class GeneralCapitalService extends AbstractCapitalService {
@@ -27,20 +30,35 @@ public class GeneralCapitalService extends AbstractCapitalService {
   GeneralCapitalRepository generalCapitalRepository;
 
   @Autowired
-  CapitalDetailRepository capitalDetailRepository;
+  FundAccountCapitalDetailRepository capitalDetailRepository;
+
+  @Override
+  public ExternalCapitalAccountType getAccountType() {
+    return ExternalCapitalAccountType.CHINA_GENERAL_CAPITAL_ACCOUNT;
+  }
+
+  @Override
+  public FundAccountCapitalPool createFundAccountCapitalPool(
+      CreateFundAccountCapitalPoolCommand command) {
+    GeneralCapitalPool capitalPool = new GeneralCapitalPool();
+    capitalPool.setFundAccountId(command.getFundAccountId());
+    capitalPool.setCurrency(command.getCurrency());
+    capitalPool.setAccountType(this.getAccountType());
+    return generalCapitalRepository.save(capitalPool);
+  }
 
   @Override
   public void apply(Long fundAccountId, CurrencyCode currency, Double appliedCapital)
       throws ResourceApplicationExcepiton {
 
-    GeneralCapital capital =
+    GeneralCapitalPool capital =
         generalCapitalRepository.findByFundAccountIdAndCurrency(fundAccountId, currency);
     if (capital == null) {
       throw new ResourceApplicationExcepiton(ErrorCode.NOT_FIND_CAPITAL_RESOURCE.toString());
     }
 
-    CapitalDetail capitalDetail =
-        capitalDetailRepository.findByCapitalAndExternalCapitalAccountIdIsNull(capital);
+    FundAccountCapitalDetail capitalDetail =
+        capitalDetailRepository.findByCapitalPoolAndExternalCapitalAccountIdIsNull(capital);
     if (capitalDetail == null) {
       throw new ResourceApplicationExcepiton(ErrorCode.NOT_FIND_CAPITAL_RESOURCE.toString());
     }

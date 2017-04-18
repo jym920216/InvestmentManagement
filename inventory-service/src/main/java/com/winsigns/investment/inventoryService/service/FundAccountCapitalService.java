@@ -5,32 +5,32 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.winsigns.investment.inventoryService.command.CreateFundAccountCapitalCommand;
+import com.winsigns.investment.inventoryService.command.CreateFundAccountCapitalPoolCommand;
 import com.winsigns.investment.inventoryService.command.SetInvestmentLimitCommand;
-import com.winsigns.investment.inventoryService.model.Capital;
-import com.winsigns.investment.inventoryService.repository.CapitalRepository;
+import com.winsigns.investment.inventoryService.model.FundAccountCapitalPool;
+import com.winsigns.investment.inventoryService.repository.FundAccountCapitalPoolRepository;
 
 @Service
 public class FundAccountCapitalService {
   @Autowired
-  private CapitalRepository fundAccountCapitalRepository;
+  private FundAccountCapitalPoolRepository fundAccountCapitalRepository;
 
-  public Collection<Capital> findAll() {
+  public Collection<FundAccountCapitalPool> findAll() {
     return fundAccountCapitalRepository.findAll();
   }
 
-  public Capital findOne(Long fundAccountCapitalId) {
+  public FundAccountCapitalPool findOne(Long fundAccountCapitalId) {
     return fundAccountCapitalRepository.findOne(fundAccountCapitalId);
   }
 
-  public Capital addFundAccountCapital(
-      CreateFundAccountCapitalCommand createFundAccountCapitalCommand) {
-    Capital fundAccountCapital = fundAccountCapitalRepository.findByFundAccountIdAndCurrency(
+  public FundAccountCapitalPool addFundAccountCapital(
+      CreateFundAccountCapitalPoolCommand createFundAccountCapitalCommand) {
+    FundAccountCapitalPool fundAccountCapital = fundAccountCapitalRepository.findByFundAccountIdAndCurrency(
         createFundAccountCapitalCommand.getFundAccountId(),
         createFundAccountCapitalCommand.getCurrency());
 
     if (fundAccountCapital == null) {
-      fundAccountCapital = new Capital();
+      fundAccountCapital = new FundAccountCapitalPool();
 
       fundAccountCapital.setFundAccountId(createFundAccountCapitalCommand.getFundAccountId());
       fundAccountCapital.setCurrency(createFundAccountCapitalCommand.getCurrency());
@@ -39,9 +39,9 @@ public class FundAccountCapitalService {
     return fundAccountCapital;
   }
 
-  public Capital setInvestmentLimit(Long faCapitalId,
+  public FundAccountCapitalPool setInvestmentLimit(Long faCapitalId,
       SetInvestmentLimitCommand setInvestmentLimitCommand) {
-    Capital fundAccountCapital = fundAccountCapitalRepository.findOne(faCapitalId);
+    FundAccountCapitalPool fundAccountCapital = fundAccountCapitalRepository.findOne(faCapitalId);
     if (fundAccountCapital == null)
       return null;
     fundAccountCapital.setInvestmentLimit(setInvestmentLimitCommand.getInvestmentLimit());

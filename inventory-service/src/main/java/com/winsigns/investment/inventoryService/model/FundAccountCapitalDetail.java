@@ -21,14 +21,14 @@ import lombok.Setter;
 
 @Entity
 @Relation(value = "capital-detail", collectionRelation = "capital-details")
-public class CapitalDetail extends MeasureHost {
+public class FundAccountCapitalDetail extends MeasureHost {
 
   // 具体的资金服务的资金
   @ManyToOne
   @JsonIgnore
   @Getter
   @Setter
-  private Capital capital;
+  private FundAccountCapitalPool capitalPool;
 
   // 外部资金账户id
   @Getter

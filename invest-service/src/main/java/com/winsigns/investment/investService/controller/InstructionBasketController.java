@@ -53,7 +53,8 @@ public class InstructionBasketController {
     responseHeaders.setLocation(
         linkTo(methodOn(InstructionBasketController.class).readInstructionBasket(basket.getId()))
             .toUri());
-    return new ResponseEntity<Object>(basket, responseHeaders, HttpStatus.CREATED);
+    return new ResponseEntity<Object>(new InstructionResourceAssembler().toResource(basket),
+        responseHeaders, HttpStatus.CREATED);
   }
 
   /**

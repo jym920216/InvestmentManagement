@@ -1,9 +1,7 @@
 package com.winsigns.investment.tradeService.service.common;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -51,17 +49,12 @@ public class TradeServiceManager {
   }
 
   /**
-   * 获取所有的交易服务信息
+   * 获取所有的交易服务
    * 
-   * @return 返回服务名和服务支持的方向
+   * @return 交易服务列表
    */
-  public Map<ITradeService, ITradeType[]> getServicesInfo() {
-    Map<ITradeService, ITradeType[]> serviceDetails = new HashMap<ITradeService, ITradeType[]>();
-
-    for (ITradeService service : services) {
-      serviceDetails.put(service, service.getTradeType());
-    }
-    return serviceDetails;
+  public List<ITradeService> getServices() {
+    return services;
   }
 
   /**

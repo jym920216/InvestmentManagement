@@ -5,13 +5,13 @@ import static com.winsigns.investment.tradeService.service.common.TradeServiceMa
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.winsigns.investment.framework.hal.HALResponse;
 import com.winsigns.investment.framework.model.Item;
 import com.winsigns.investment.tradeService.constant.EntrustOperatorType;
 import com.winsigns.investment.tradeService.model.Entrust;
 import com.winsigns.investment.tradeService.model.EntrustMessage;
+import com.winsigns.investment.tradeService.service.common.IPriceType;
 import com.winsigns.investment.tradeService.service.common.ITradeService;
 import com.winsigns.investment.tradeService.service.common.ITradeType;
 
@@ -37,7 +37,10 @@ public class EntrustResource extends HALResponse<Entrust> {
   protected final List<Item> supportedOperator = new ArrayList<Item>();
 
   @Getter
-  protected final List<Item> supprotedInvestService = new ArrayList<Item>();
+  protected final List<Item> supportedTradeService = new ArrayList<Item>();
+
+  @Getter
+  protected final List<Item> supportPriceType = new ArrayList<Item>();
 
   public EntrustResource(Entrust entrust) {
     super(entrust);
@@ -76,13 +79,17 @@ public class EntrustResource extends HALResponse<Entrust> {
       this.supportedOperator.add(new Item(type.name(), type.i18n()));
     }
     // 3.支持的交易服务
-    for (Map.Entry<ITradeService, ITradeType[]> info : getTradeServiceManager().getServicesInfo()
-        .entrySet()) {
-      ITradeType[] types = info.getValue();
-      for (int i = 0; i < types.length; ++i) {
-        this.supprotedInvestService.add(new Item(info.getKey().getName() + "." + types[i].name(),
-            info.getKey().getSimpleName() + "-" + types[i].i18n()));
+    for (ITradeService svc : getTradeServiceManager().getServices()) {
+      ITradeType[] tradeTypes = svc.getTradeType();
+      for (int i = 0; i < tradeTypes.length; ++i) {
+        this.supportedTradeService.add(new Item(svc.getName() + "." + tradeTypes[i].name(),
+            svc.getSimpleName() + "-" + tradeTypes[i].i18n()));
       }
+    }
+    // 4.支持的价格类型
+    IPriceType[] priceTypes = service.getPriceType();
+    for (int i = 0; i < priceTypes.length; ++i) {
+      this.supportPriceType.add(new Item(priceTypes[i].name(), priceTypes[i].i18n()));
     }
   }
 
