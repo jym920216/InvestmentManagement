@@ -95,7 +95,8 @@ service discovery with Eureka
 /instruction-baskets/{instructionBasketId}/instructions POST
 
 /entrusts GET/POST
-/entrusts/{entrustId} GET/PUT/POST/DELETE
+/entrusts/{entrustId} GET/PUT/DELETE
+/entrusts/{entrustId}/dones POST
 
 /dones/{doneId} GET
 ```

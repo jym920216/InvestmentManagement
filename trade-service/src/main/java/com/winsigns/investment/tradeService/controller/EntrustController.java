@@ -103,7 +103,7 @@ public class EntrustController {
    * @param command
    * @return
    */
-  @PostMapping("/{entrustId}")
+  @PostMapping("/{entrustId}/dones")
   public DoneResource createDone(@PathVariable Long entrustId,
       @RequestBody CreateDoneCommand command) {
     command.setEntrustId(entrustId);
