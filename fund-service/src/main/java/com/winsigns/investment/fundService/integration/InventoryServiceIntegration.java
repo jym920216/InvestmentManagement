@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.Criteria;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.winsigns.investment.framework.integration.AbstractIntegration;
 import com.winsigns.investment.fundService.command.CreateCashPoolCommand;
@@ -20,11 +21,14 @@ import com.winsigns.investment.fundService.model.FundAccount;
 import com.winsigns.investment.fundService.model.FundAccountCapitalPool;
 import com.winsigns.investment.fundService.model.FundAccountCapitalPool.FundAccoutCapitalDetail;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Created by colin on 2017/2/28.
  */
 
 @Component
+@Slf4j
 public class InventoryServiceIntegration extends AbstractIntegration {
 
   private static String INVENTORY_SERVICE = "inventory-service";
@@ -104,8 +108,8 @@ public class InventoryServiceIntegration extends AbstractIntegration {
             detail.setId(Long.valueOf(JsonPath.read(details.get(0), "$.id").toString()));
             detail.setCash(JsonPath.read(details.get(0), "$.cash"));
           }
-        } catch (RuntimeException e) {
-          continue;
+        } catch (PathNotFoundException e) {
+          // log.info(e.getMessage());
         }
         pool.getDetails().add(detail);
       }
