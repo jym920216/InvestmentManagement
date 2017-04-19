@@ -82,5 +82,5 @@ CREATE TABLE position
 )CHARACTER SET = utf8;
 --外键
 ALTER TABLE fund_account_capital_detail ADD CONSTRAINT fk_fund_account_capital_pool FOREIGN KEY (capital_pool_id) REFERENCES fund_account_capital_pool (id);
-ALTER TABLE fund_account_capital_serial ADD CONSTRAINT fk_fund_account_capital_detail FOREIGN KEY (fund_account_capital_detail_id) REFERENCES capital_detail (id);
+ALTER TABLE fund_account_capital_serial ADD CONSTRAINT fk_fund_account_capital_detail FOREIGN KEY (fund_account_capital_detail_id) REFERENCES fund_account_capital_detail (id);
 ALTER TABLE eca_cash_serial ADD CONSTRAINT fk_eca_cash_serial FOREIGN KEY (eca_cash_pool_id) REFERENCES external_capital_account_cash_pool (id);
