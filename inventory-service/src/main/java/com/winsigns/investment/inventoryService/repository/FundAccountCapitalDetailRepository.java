@@ -12,10 +12,11 @@ public interface FundAccountCapitalDetailRepository
   public FundAccountCapitalDetail findByCapitalPoolAndExternalCapitalAccountId(
       FundAccountCapitalPool capitalPool, Long externalCapitalAccountId);
 
-  public List<FundAccountCapitalDetail> findByCapitalPool(FundAccountCapitalPool capitalPool);
-
   public FundAccountCapitalDetail findByCapitalPoolAndExternalCapitalAccountIdIsNull(
       FundAccountCapitalPool capitalPool);
+
+  public List<FundAccountCapitalDetail> findByExternalCapitalAccountId(
+      Long externalCapitalAccountId);
 }
 
 

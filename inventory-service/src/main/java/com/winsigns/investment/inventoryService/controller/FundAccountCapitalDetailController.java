@@ -6,22 +6,22 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.core.Relation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winsigns.investment.inventoryService.command.AssignAccountCommand;
-import com.winsigns.investment.inventoryService.command.EnfeoffAccountCommand;
+import com.winsigns.investment.inventoryService.capital.common.CapitalServiceManager;
 import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
 import com.winsigns.investment.inventoryService.resource.FundAccountCapitalDetailResource;
 import com.winsigns.investment.inventoryService.resource.FundAccountCapitalDetailResourceAssembler;
-import com.winsigns.investment.inventoryService.service.FundAccountCapitalDetailService;
 
 @RestController
 @RequestMapping(path = "/fa-capital-details",
@@ -29,65 +29,37 @@ import com.winsigns.investment.inventoryService.service.FundAccountCapitalDetail
 public class FundAccountCapitalDetailController {
 
   @Autowired
-  FundAccountCapitalDetailService fundAccountCapitalDetailService;
+  CapitalServiceManager capitalServiceManager;
 
   @GetMapping
-  public Resources<FundAccountCapitalDetailResource> readFundAccountCapitalDetails() {
-    Link link = linkTo(FundAccountCapitalDetailController.class).withSelfRel();
+  public Resources<FundAccountCapitalDetailResource> readFundAccountCapitalDetails(
+      @RequestParam Long externalCapitalAccountId) {
+
+    Link link = linkTo(methodOn(FundAccountCapitalDetailController.class)
+        .readFundAccountCapitalDetails(externalCapitalAccountId)).withRel(
+            FundAccountCapitalDetail.class.getAnnotation(Relation.class).collectionRelation());
+
+    List<FundAccountCapitalDetail> details =
+        capitalServiceManager.readFundAccountCapitalDetailByECA(externalCapitalAccountId);
+
     return new Resources<FundAccountCapitalDetailResource>(
-        new FundAccountCapitalDetailResourceAssembler()
-            .toResources(fundAccountCapitalDetailService.findAll()),
-        link);
+        new FundAccountCapitalDetailResourceAssembler().toResources(details), link);
   }
 
+  /**
+   * 查询一条指定的产品账户资金明细
+   * 
+   * @param faCapitalDetailId
+   * @return
+   */
   @GetMapping("/{faCapitalDetailId}")
   public FundAccountCapitalDetailResource readFundAccountCapitalDetail(
       @PathVariable Long faCapitalDetailId) {
     FundAccountCapitalDetail fundAccountCapitalDetail =
-        fundAccountCapitalDetailService.findOne(faCapitalDetailId);
+        capitalServiceManager.readFundAccountCapitalDetail(faCapitalDetailId);
     FundAccountCapitalDetailResource fundAccountCapitalResource =
         new FundAccountCapitalDetailResourceAssembler().toResource(fundAccountCapitalDetail);
 
     return fundAccountCapitalResource;
   }
-
-  @PostMapping("/{faCapitalDetailId}/assign-from")
-  public FundAccountCapitalDetailResource assignFrom(@PathVariable Long faCapitalDetailId,
-      @RequestBody AssignAccountCommand assignAccountCommand) {
-    return new FundAccountCapitalDetailResourceAssembler().toResource(
-        fundAccountCapitalDetailService.assignFrom(faCapitalDetailId, assignAccountCommand));
-  }
-
-  @PostMapping("/{faCapitalDetailId}/assign-to")
-  public FundAccountCapitalDetailResource assignTo(@PathVariable Long faCapitalDetailId,
-      @RequestBody AssignAccountCommand assignAccountCommand) {
-    return new FundAccountCapitalDetailResourceAssembler().toResource(
-        fundAccountCapitalDetailService.assignTo(faCapitalDetailId, assignAccountCommand));
-  }
-
-  @PostMapping("/{faCapitalDetailId}/enfeoff-from")
-  public Resources<FundAccountCapitalDetailResource> enfeoffFrom(
-      @PathVariable Long faCapitalDetailId,
-      @RequestBody EnfeoffAccountCommand enfeoffAccountCommand) {
-    Link link = linkTo(methodOn(FundAccountCapitalDetailController.class)
-        .enfeoffFrom(faCapitalDetailId, enfeoffAccountCommand)).withSelfRel();
-    return new Resources<FundAccountCapitalDetailResource>(
-        new FundAccountCapitalDetailResourceAssembler().toResources(fundAccountCapitalDetailService
-            .enfeoff(faCapitalDetailId, enfeoffAccountCommand.getMatchFACapitalDetailId(),
-                enfeoffAccountCommand.getAssignedCash())),
-        link);
-  }
-
-  @PostMapping("/{faCapitalDetailId}/enfeoff-to")
-  public Resources<FundAccountCapitalDetailResource> enfeoffTo(@PathVariable Long faCapitalDetailId,
-      @RequestBody EnfeoffAccountCommand enfeoffAccountCommand) {
-    Link link = linkTo(methodOn(FundAccountCapitalDetailController.class)
-        .enfeoffTo(faCapitalDetailId, enfeoffAccountCommand)).withSelfRel();
-    return new Resources<FundAccountCapitalDetailResource>(
-        new FundAccountCapitalDetailResourceAssembler().toResources(fundAccountCapitalDetailService
-            .enfeoff(enfeoffAccountCommand.getMatchFACapitalDetailId(), faCapitalDetailId,
-                enfeoffAccountCommand.getAssignedCash())),
-        link);
-  }
-
 }

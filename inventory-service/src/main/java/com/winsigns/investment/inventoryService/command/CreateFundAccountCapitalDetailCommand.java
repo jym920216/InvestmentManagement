@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class CreateFundAccountCapitalDetailCommand {
 
+  private Long faCapitalPoolId;
+
   private Long externalCapitalAccountId;
 
 }

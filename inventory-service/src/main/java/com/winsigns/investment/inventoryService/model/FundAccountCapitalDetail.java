@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Relation(value = "capital-detail", collectionRelation = "capital-details")
+@Relation(value = "fa-capital-detail", collectionRelation = "fa-capital-details")
 public class FundAccountCapitalDetail extends MeasureHost {
 
   // 具体的资金服务的资金

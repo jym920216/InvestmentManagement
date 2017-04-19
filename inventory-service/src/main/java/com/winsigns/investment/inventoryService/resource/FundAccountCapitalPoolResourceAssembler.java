@@ -1,8 +1,13 @@
 package com.winsigns.investment.inventoryService.resource;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
+import org.springframework.hateoas.core.Relation;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
 import com.winsigns.investment.inventoryService.controller.FundAccountCapitalPoolController;
+import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
 import com.winsigns.investment.inventoryService.model.FundAccountCapitalPool;
 
 public class FundAccountCapitalPoolResourceAssembler
@@ -13,18 +18,15 @@ public class FundAccountCapitalPoolResourceAssembler
   }
 
   @Override
-  public FundAccountCapitalPoolResource toResource(FundAccountCapitalPool fundAccountCapital) {
-    FundAccountCapitalPoolResource fundAccountCapitalResource =
-        createResourceWithId(fundAccountCapital.getId(), fundAccountCapital);
+  public FundAccountCapitalPoolResource toResource(FundAccountCapitalPool capitalPool) {
+    FundAccountCapitalPoolResource capitalPoolResource =
+        createResourceWithId(capitalPool.getId(), capitalPool);
 
-    // fundAccountCapitalResource.add(linkTo(methodOn(FundAccountCapitalPoolController.class)
-    // .readFundAccountCapitalDetails(fundAccountCapital.getId())).withRel(
-    // FundAccountCapitalDetail.class.getAnnotation(Relation.class).collectionRelation()));
-    // fundAccountCapitalResource.add(linkTo(methodOn(FundAccountCapitalPoolController.class)
-    // .setInvestmentLimit(fundAccountCapital.getId(), new SetInvestmentLimitCommand()))
-    // .withRel("set-investment-limit"));
+    capitalPoolResource.add(linkTo(methodOn(FundAccountCapitalPoolController.class)
+        .readFundAccountCapitalDetails(capitalPool.getId())).withRel(
+            FundAccountCapitalDetail.class.getAnnotation(Relation.class).collectionRelation()));
 
-    return fundAccountCapitalResource;
+    return capitalPoolResource;
   }
 
   @Override

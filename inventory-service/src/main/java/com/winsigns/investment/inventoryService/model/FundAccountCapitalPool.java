@@ -25,10 +25,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Relation(value = "capital-pool", collectionRelation = "capital-pools")
+@Relation(value = "fa-capital-pool", collectionRelation = "fa-capital-pools")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
-@DiscriminatorValue("capital_pool")
+@DiscriminatorValue("fa-capital_pool")
 public class FundAccountCapitalPool extends AbstractEntity {
 
   /*

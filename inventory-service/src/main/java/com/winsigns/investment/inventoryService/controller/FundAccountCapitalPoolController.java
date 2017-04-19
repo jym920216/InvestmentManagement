@@ -25,10 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.winsigns.investment.inventoryService.capital.common.CapitalServiceManager;
+import com.winsigns.investment.inventoryService.command.CreateFundAccountCapitalDetailCommand;
 import com.winsigns.investment.inventoryService.command.CreateFundAccountCapitalPoolCommand;
 import com.winsigns.investment.inventoryService.command.SetInvestmentLimitCommand;
 import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
 import com.winsigns.investment.inventoryService.model.FundAccountCapitalPool;
+import com.winsigns.investment.inventoryService.resource.FundAccountCapitalDetailResource;
 import com.winsigns.investment.inventoryService.resource.FundAccountCapitalDetailResourceAssembler;
 import com.winsigns.investment.inventoryService.resource.FundAccountCapitalPoolResource;
 import com.winsigns.investment.inventoryService.resource.FundAccountCapitalPoolResourceAssembler;
@@ -41,6 +43,12 @@ public class FundAccountCapitalPoolController {
   @Autowired
   CapitalServiceManager capitalServiceManager;
 
+  /**
+   * 获取指定产品账户下的所有资金池
+   * 
+   * @param fundAccountId
+   * @return
+   */
   @GetMapping
   public Resources<FundAccountCapitalPoolResource> readFundAccountCapitalPools(
       @RequestParam Long fundAccountId) {
@@ -106,4 +114,37 @@ public class FundAccountCapitalPoolController {
     FundAccountCapitalPool capitalPool = capitalServiceManager.setInvestmentLimit(command);
     return readFundAccountCapitalPool(capitalPool.getId());
   }
+
+  @GetMapping("/{faCapitalPoolId}/fa-capital-details")
+  public Resources<FundAccountCapitalDetailResource> readFundAccountCapitalDetails(
+      @PathVariable Long faCapitalPoolId) {
+    Link link = linkTo(methodOn(FundAccountCapitalPoolController.class)
+        .readFundAccountCapitalDetails(faCapitalPoolId)).withSelfRel();
+    return new Resources<FundAccountCapitalDetailResource>(
+        new FundAccountCapitalDetailResourceAssembler()
+            .toResources(capitalServiceManager.readDetailsByFACapitalPool(faCapitalPoolId)),
+        link);
+  }
+
+  /**
+   * 创建产品账户资金明细
+   * 
+   * @param faCapitalPoolId
+   * @param command
+   * @return
+   */
+  @PostMapping("/{faCapitalPoolId}/fa-capital-details")
+  public ResponseEntity<?> createFundAccountCapitalDetail(@PathVariable Long faCapitalPoolId,
+      @RequestBody CreateFundAccountCapitalDetailCommand command) {
+    command.setFaCapitalPoolId(faCapitalPoolId);
+    FundAccountCapitalDetail fundAccountCapitalDetail =
+        capitalServiceManager.addFundAccountCapitalDetail(command);
+    HttpHeaders responseHeaders = new HttpHeaders();
+    responseHeaders.setLocation(linkTo(methodOn(FundAccountCapitalDetailController.class)
+        .readFundAccountCapitalDetail(fundAccountCapitalDetail.getId())).toUri());
+    return new ResponseEntity<Object>(fundAccountCapitalDetail, responseHeaders,
+        HttpStatus.CREATED);
+  }
+
+
 }

@@ -1,12 +1,7 @@
 package com.winsigns.investment.inventoryService.resource;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
-import com.winsigns.investment.inventoryService.command.AssignAccountCommand;
-import com.winsigns.investment.inventoryService.command.EnfeoffAccountCommand;
 import com.winsigns.investment.inventoryService.controller.FundAccountCapitalDetailController;
 import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
 
@@ -27,20 +22,20 @@ public class FundAccountCapitalDetailResourceAssembler
     // fundAccountCapitalDetailResource.add(linkTo(methodOn(FundAccountCapitalPoolController.class)
     // .readFundAccountCapital(fundAccountCapitalDetail.getCapitalPool().getId()))
     // .withRel(FundAccountCapitalPool.class.getAnnotation(Relation.class).value()));
-
-    fundAccountCapitalDetailResource.add(linkTo(methodOn(FundAccountCapitalDetailController.class)
-        .assignFrom(fundAccountCapitalDetail.getId(), new AssignAccountCommand()))
-            .withRel("assign-from"));
-    fundAccountCapitalDetailResource.add(linkTo(methodOn(FundAccountCapitalDetailController.class)
-        .assignTo(fundAccountCapitalDetail.getId(), new AssignAccountCommand()))
-            .withRel("assign-to"));
-
-    fundAccountCapitalDetailResource.add(linkTo(methodOn(FundAccountCapitalDetailController.class)
-        .enfeoffFrom(fundAccountCapitalDetail.getId(), new EnfeoffAccountCommand()))
-            .withRel("enfeoff-from"));
-    fundAccountCapitalDetailResource.add(linkTo(methodOn(FundAccountCapitalDetailController.class)
-        .enfeoffTo(fundAccountCapitalDetail.getId(), new EnfeoffAccountCommand()))
-            .withRel("enfeoff-to"));
+    //
+    // fundAccountCapitalDetailResource.add(linkTo(methodOn(FundAccountCapitalDetailController.class)
+    // .assignFrom(fundAccountCapitalDetail.getId(), new AssignAccountCommand()))
+    // .withRel("assign-from"));
+    // fundAccountCapitalDetailResource.add(linkTo(methodOn(FundAccountCapitalDetailController.class)
+    // .assignTo(fundAccountCapitalDetail.getId(), new AssignAccountCommand()))
+    // .withRel("assign-to"));
+    //
+    // fundAccountCapitalDetailResource.add(linkTo(methodOn(FundAccountCapitalDetailController.class)
+    // .enfeoffFrom(fundAccountCapitalDetail.getId(), new EnfeoffAccountCommand()))
+    // .withRel("enfeoff-from"));
+    // fundAccountCapitalDetailResource.add(linkTo(methodOn(FundAccountCapitalDetailController.class)
+    // .enfeoffTo(fundAccountCapitalDetail.getId(), new EnfeoffAccountCommand()))
+    // .withRel("enfeoff-to"));
 
     return fundAccountCapitalDetailResource;
   }

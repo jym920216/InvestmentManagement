@@ -1,83 +1,117 @@
 package com.winsigns.investment.fundService.integration;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.winsigns.investment.fundService.command.CreateCashPoolCommand;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Currency;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+
 import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestOperations;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.jsonpath.Criteria;
+import com.jayway.jsonpath.Filter;
+import com.jayway.jsonpath.JsonPath;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.winsigns.investment.framework.integration.AbstractIntegration;
+import com.winsigns.investment.fundService.command.CreateCashPoolCommand;
+import com.winsigns.investment.fundService.constant.CurrencyCode;
+import com.winsigns.investment.fundService.model.ExternalCapitalAccount;
+import com.winsigns.investment.fundService.model.FundAccount;
+import com.winsigns.investment.fundService.model.FundAccountCapitalPool;
+import com.winsigns.investment.fundService.model.FundAccountCapitalPool.FundAccoutCapitalDetail;
 
 /**
  * Created by colin on 2017/2/28.
  */
 
 @Component
-public class InventoryServiceIntegration {
+public class InventoryServiceIntegration extends AbstractIntegration {
 
   private static String INVENTORY_SERVICE = "inventory-service";
-
-  @Autowired
-
-  private LoadBalancerClient loadBalancer;
-  @Autowired
-
-  private RestOperations restTemplate;
 
   private String getECACashPoolPath = "/eca-cash-pools?externalCapitalAccountId=";
 
   private String postECACashPoolPath = "/eca-cash-pools";
 
+  private String getFACapitalDetails = "/fa-capital-details?externalCapitalAccountId=%d";
+
+  @Override
+  public String getIntegrationName() {
+    return INVENTORY_SERVICE;
+  }
+
   @HystrixCommand(fallbackMethod = "defaultECACashPools")
-  public List getECACashPools(Long externalCapitalAccountId) {
-    ResponseEntity<String> resultStr = restTemplate
-        .getForEntity(loadBalancer.choose(INVENTORY_SERVICE).getUri() + getECACashPoolPath
-            + externalCapitalAccountId, String.class);
-    return parseECACashPools(resultStr);
+  public JsonNode getECACashPools(Long externalCapitalAccountId) {
+
+    JsonNode node =
+        this.getNode(this.getIntegrationURI() + getECACashPoolPath + externalCapitalAccountId);
+    return node.get("_embedded").get("eca-cash-pools");
   }
 
-  private List parseECACashPools(ResponseEntity<String> resp) {
-    ObjectMapper objectMapper = new ObjectMapper()
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    JsonNode node = null;
-    try {
-      node = objectMapper.readerFor(JsonNode.class).readValue(resp.getBody());
-      JsonNode jsonNode = node.get("_embedded").get("eca-cash-pools");
-      return objectMapper.convertValue(jsonNode, List.class);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private List defaultECACashPools(Long externalCapitalAccountId) {
-    return new ArrayList();
+  public JsonNode defaultECACashPools(Long externalCapitalAccountId) {
+    return null;
   }
 
   public boolean createECACashPools(Long externalCapitalAccountId,
-      Collection<Currency> supportedCurrency) {
+      Collection<CurrencyCode> supportedCurrency) {
 
     CreateCashPoolCommand cashChangeCommand = new CreateCashPoolCommand();
     cashChangeCommand.setExternalCapitalAccountId(externalCapitalAccountId);
 
-    for (Currency currency : supportedCurrency) {
+    for (CurrencyCode currency : supportedCurrency) {
       cashChangeCommand.setCurrency(currency);
 
       HttpEntity<CreateCashPoolCommand> requestEntity =
           new HttpEntity<CreateCashPoolCommand>(cashChangeCommand);
 
-      restTemplate
-          .postForEntity(loadBalancer.choose(INVENTORY_SERVICE).getUri() + postECACashPoolPath,
-              requestEntity, String.class);
+      restTemplate.postForEntity(this.getIntegrationURI() + postECACashPoolPath, requestEntity,
+          String.class);
     }
     return true;
+  }
+
+  /**
+   * 获取产品账户属性
+   * 
+   * @param account
+   * @return
+   */
+  @HystrixCommand(fallbackMethod = "defaultFundAccountCapitalDetails")
+  public List<FundAccountCapitalPool> queryFundAccountCapitalDetails(
+      ExternalCapitalAccount account) {
+    List<FundAccountCapitalPool> result = new ArrayList<FundAccountCapitalPool>();
+
+    String node = this
+        .getJson(this.getIntegrationURI() + String.format(getFACapitalDetails, account.getId()));
+
+    // 每一个币种下罗列所有产品账户
+    for (CurrencyCode currency : account.getAccountType().getSupportedCurrency()) {
+
+      FundAccountCapitalPool pool = new FundAccountCapitalPool();
+      pool.setCurrency(currency);
+      pool.setCurrencyLabel(currency.i18n());
+
+      for (FundAccount fundAccount : account.getFund().getFundAccounts()) {
+        List<Object> details = JsonPath.read(node, "$._embedded.fa-capital-details[?]",
+            Filter.filter(Criteria.where("fundAccountId").is(fundAccount.getId()).and("currency")
+                .is(currency.name())));
+
+        FundAccoutCapitalDetail detail = new FundAccoutCapitalDetail();
+        detail.setFundAccountId(fundAccount.getId());
+        detail.setName(fundAccount.getName());
+        if (!details.isEmpty()) {
+          detail.setId(Long.valueOf(JsonPath.read(details.get(0), "$.id").toString()));
+          detail.setCash(JsonPath.read(details.get(0), "$.cash"));
+        }
+        pool.getDetails().add(detail);
+      }
+      result.add(pool);
+    }
+    return result;
+  }
+
+  public List<FundAccountCapitalPool> defaultFundAccountCapitalDetails(
+      ExternalCapitalAccount account) {
+    return new ArrayList<FundAccountCapitalPool>();
   }
 }
