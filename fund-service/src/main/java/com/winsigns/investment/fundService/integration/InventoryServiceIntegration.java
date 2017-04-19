@@ -49,7 +49,7 @@ public class InventoryServiceIntegration extends AbstractIntegration {
   }
 
   public JsonNode defaultECACashPools(Long externalCapitalAccountId) {
-    return null;
+    return this.objectMapper.createArrayNode();
   }
 
   public boolean createECACashPools(Long externalCapitalAccountId,
@@ -92,22 +92,27 @@ public class InventoryServiceIntegration extends AbstractIntegration {
       pool.setCurrencyLabel(currency.i18n());
 
       for (FundAccount fundAccount : account.getFund().getFundAccounts()) {
-        List<Object> details = JsonPath.read(node, "$._embedded.fa-capital-details[?]",
-            Filter.filter(Criteria.where("fundAccountId").is(fundAccount.getId()).and("currency")
-                .is(currency.name())));
-
         FundAccoutCapitalDetail detail = new FundAccoutCapitalDetail();
         detail.setFundAccountId(fundAccount.getId());
         detail.setName(fundAccount.getName());
-        if (!details.isEmpty()) {
-          detail.setId(Long.valueOf(JsonPath.read(details.get(0), "$.id").toString()));
-          detail.setCash(JsonPath.read(details.get(0), "$.cash"));
+        try {
+          List<Object> details = JsonPath.read(node, "$._embedded.fa-capital-details[?]",
+              Filter.filter(Criteria.where("fundAccountId").is(fundAccount.getId()).and("currency")
+                  .is(currency.name())));
+
+          if (!details.isEmpty()) {
+            detail.setId(Long.valueOf(JsonPath.read(details.get(0), "$.id").toString()));
+            detail.setCash(JsonPath.read(details.get(0), "$.cash"));
+          }
+        } catch (RuntimeException e) {
+          continue;
         }
         pool.getDetails().add(detail);
       }
       result.add(pool);
     }
     return result;
+
   }
 
   public List<FundAccountCapitalPool> defaultFundAccountCapitalDetails(
