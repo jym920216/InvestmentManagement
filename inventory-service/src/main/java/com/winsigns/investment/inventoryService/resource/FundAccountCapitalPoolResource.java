@@ -18,6 +18,7 @@ public class FundAccountCapitalPoolResource extends HALResponse<FundAccountCapit
 
     this.currencyLabel = capitalPool.getCurrency().i18n();
     this.accountTypeLabel = capitalPool.getAccountType().i18n();
+
   }
 
 }

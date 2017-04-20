@@ -1,13 +1,7 @@
 package com.winsigns.investment.inventoryService.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import org.springframework.hateoas.core.Relation;
 
@@ -20,8 +14,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Relation(value = "fa-capital-detail", collectionRelation = "fa-capital-details")
-public class FundAccountCapitalDetail extends MeasureHost {
+@Relation(value = "capital-detail", collectionRelation = "capital-details")
+public class CapitalDetail extends MeasureHost {
 
   // 具体的资金服务的资金
   @ManyToOne
@@ -33,27 +27,24 @@ public class FundAccountCapitalDetail extends MeasureHost {
   // 外部资金账户id
   @Getter
   @Setter
-  private Long externalCapitalAccountId;
+  @JsonIgnore
+  @ManyToOne
+  private ECACashPool cashPool;
 
   // 现金
   @Getter
   @Setter
-  private Double cash;
+  private Double cash = 0.0;
 
   // 可用资金
   @Getter
   @Setter
-  private Double availableCapital;
+  private Double availableCapital = 0.0;
 
   // 可取资金
   @Getter
   @Setter
-  private Double desirableCapital;
-
-  @OneToMany(mappedBy = "capitalDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @JsonIgnore
-  List<FundAccountCapitalSerial> fundAccountCapitalSerials =
-      new ArrayList<FundAccountCapitalSerial>();
+  private Double desirableCapital = 0.0;
 
   @Override
   protected Class<? extends MeasureHostType> defineType() {

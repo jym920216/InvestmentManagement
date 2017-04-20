@@ -65,6 +65,6 @@ public class FundAccountCapitalPool extends AbstractEntity {
   @JsonIgnore
   @Getter
   @Setter
-  private List<FundAccountCapitalDetail> details = new ArrayList<FundAccountCapitalDetail>();
+  private List<CapitalDetail> details = new ArrayList<CapitalDetail>();
 
 }

@@ -8,14 +8,18 @@ import com.winsigns.investment.fundService.constant.CurrencyCode;
 import lombok.Data;
 
 @Data
-public class FundAccountCapitalPool {
+public class ECACashPool {
+
+  private Long id;
 
   private CurrencyCode currency;
 
   private String currencyLabel;
 
+  private Double unassignedCapital;
+
   @Data
-  public static class FundAccoutCapitalDetail {
+  public static class CapitalDetail {
     private Long id;
 
     private Long fundAccountId;
@@ -25,5 +29,5 @@ public class FundAccountCapitalPool {
     private Double cash;
   }
 
-  private List<FundAccoutCapitalDetail> details = new ArrayList<FundAccoutCapitalDetail>();
+  private List<CapitalDetail> details = new ArrayList<CapitalDetail>();
 }

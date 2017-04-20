@@ -1,6 +1,5 @@
 package com.winsigns.investment.fundService.integration;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -8,6 +7,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.Criteria;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
@@ -18,17 +20,12 @@ import com.winsigns.investment.fundService.command.CreateCashPoolCommand;
 import com.winsigns.investment.fundService.constant.CurrencyCode;
 import com.winsigns.investment.fundService.model.ExternalCapitalAccount;
 import com.winsigns.investment.fundService.model.FundAccount;
-import com.winsigns.investment.fundService.model.FundAccountCapitalPool;
-import com.winsigns.investment.fundService.model.FundAccountCapitalPool.FundAccoutCapitalDetail;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by colin on 2017/2/28.
  */
 
 @Component
-@Slf4j
 public class InventoryServiceIntegration extends AbstractIntegration {
 
   private static String INVENTORY_SERVICE = "inventory-service";
@@ -37,7 +34,7 @@ public class InventoryServiceIntegration extends AbstractIntegration {
 
   private String postECACashPoolPath = "/eca-cash-pools";
 
-  private String getFACapitalDetails = "/fa-capital-details?externalCapitalAccountId=%d";
+  private String getFACapitalDetails = "/capital-details?externalCapitalAccountId=%d";
 
   @Override
   public String getIntegrationName() {
@@ -45,14 +42,43 @@ public class InventoryServiceIntegration extends AbstractIntegration {
   }
 
   @HystrixCommand(fallbackMethod = "defaultECACashPools")
-  public JsonNode getECACashPools(Long externalCapitalAccountId) {
+  public JsonNode getECACashPools(ExternalCapitalAccount account) {
 
-    JsonNode node =
-        this.getNode(this.getIntegrationURI() + getECACashPoolPath + externalCapitalAccountId);
-    return node.get("_embedded").get("eca-cash-pools");
+    ObjectNode result =
+        this.getNode(this.getIntegrationURI() + getECACashPoolPath + account.getId());
+    ArrayNode root = result.with("_embedded").withArray("eca-cash-pools");
+    for (JsonNode item : root) {
+      if (item.getNodeType() == JsonNodeType.OBJECT) {
+        ObjectNode item_ = (ObjectNode) item;
+        Double cash = item.get("unassignedCapital").asDouble();
+        ArrayNode detailsNode = this.objectMapper.createArrayNode();
+        for (FundAccount fundAccount : account.getFund().getFundAccounts()) {
+          List<Object> details = null;
+          try {
+            details = JsonPath.read(item.toString(), "$._embedded.capital-details[?]",
+                Filter.filter(Criteria.where("fundAccountId").is(fundAccount.getId())));
+          } catch (PathNotFoundException e) {
+            // log.info(e.getMessage());
+          }
+          ObjectNode detailNode = this.objectMapper.createObjectNode();
+          detailNode.put("fundAccountId", fundAccount.getId());
+          detailNode.put("name", fundAccount.getName());
+          if (details != null && !details.isEmpty()) {
+            detailNode.put("id", JsonPath.read(details.get(0), "$.id").toString());
+            Double cash_ = JsonPath.read(details.get(0), "$.cash");
+            detailNode.put("cash", cash_);
+            cash += cash_;
+          }
+          detailsNode.add(detailNode);
+        }
+        item_.set("capital-details", detailsNode);
+        item_.put("cash", cash);
+      }
+    }
+    return root;
   }
 
-  public JsonNode defaultECACashPools(Long externalCapitalAccountId) {
+  public JsonNode defaultECACashPools(ExternalCapitalAccount account) {
     return this.objectMapper.createArrayNode();
   }
 
@@ -72,55 +98,5 @@ public class InventoryServiceIntegration extends AbstractIntegration {
           String.class);
     }
     return true;
-  }
-
-  /**
-   * 获取产品账户属性
-   * 
-   * @param account
-   * @return
-   */
-  @HystrixCommand(fallbackMethod = "defaultFundAccountCapitalDetails")
-  public List<FundAccountCapitalPool> queryFundAccountCapitalDetails(
-      ExternalCapitalAccount account) {
-    List<FundAccountCapitalPool> result = new ArrayList<FundAccountCapitalPool>();
-
-    String node = this
-        .getJson(this.getIntegrationURI() + String.format(getFACapitalDetails, account.getId()));
-
-    // 每一个币种下罗列所有产品账户
-    for (CurrencyCode currency : account.getAccountType().getSupportedCurrency()) {
-
-      FundAccountCapitalPool pool = new FundAccountCapitalPool();
-      pool.setCurrency(currency);
-      pool.setCurrencyLabel(currency.i18n());
-
-      for (FundAccount fundAccount : account.getFund().getFundAccounts()) {
-        FundAccoutCapitalDetail detail = new FundAccoutCapitalDetail();
-        detail.setFundAccountId(fundAccount.getId());
-        detail.setName(fundAccount.getName());
-        try {
-          List<Object> details = JsonPath.read(node, "$._embedded.fa-capital-details[?]",
-              Filter.filter(Criteria.where("fundAccountId").is(fundAccount.getId()).and("currency")
-                  .is(currency.name())));
-
-          if (!details.isEmpty()) {
-            detail.setId(Long.valueOf(JsonPath.read(details.get(0), "$.id").toString()));
-            detail.setCash(JsonPath.read(details.get(0), "$.cash"));
-          }
-        } catch (PathNotFoundException e) {
-          // log.info(e.getMessage());
-        }
-        pool.getDetails().add(detail);
-      }
-      result.add(pool);
-    }
-    return result;
-
-  }
-
-  public List<FundAccountCapitalPool> defaultFundAccountCapitalDetails(
-      ExternalCapitalAccount account) {
-    return new ArrayList<FundAccountCapitalPool>();
   }
 }

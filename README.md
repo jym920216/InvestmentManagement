@@ -82,9 +82,14 @@ service discovery with Eureka
 
 /eca-cash-pools GET
 /eca-cash-pools/{ecaCashPoolId} GET/PUT/DELETE
+/eca-cash-pools/{ecaCashPoolId}/to-fa POST              #分配资金到产品账户
 
 /fa-capital-pools GET/POST
 /fa-capital-pools/{faCapitalPoolId} GET/PUT
+/fa-capital-pools/{faCapitalPoolId}/to-eca POST         #归还资金到外部资金账户
+
+/capital-details POST
+/capital-details/{capitalDetailId} GET
 
 /instructions GET/POST/DELETE
 /instructions/{instructionId} GET/PUT/DELETE

@@ -8,9 +8,9 @@ import com.winsigns.investment.inventoryService.command.CreateFundAccountCapital
 import com.winsigns.investment.inventoryService.constant.CurrencyCode;
 import com.winsigns.investment.inventoryService.constant.ExternalCapitalAccountType;
 import com.winsigns.investment.inventoryService.exception.ResourceApplicationExcepiton;
-import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
+import com.winsigns.investment.inventoryService.model.CapitalDetail;
 import com.winsigns.investment.inventoryService.model.FundAccountCapitalPool;
-import com.winsigns.investment.inventoryService.repository.FundAccountCapitalDetailRepository;
+import com.winsigns.investment.inventoryService.repository.CapitalDetailRepository;
 
 @Service
 public class GeneralCapitalService extends AbstractCapitalService {
@@ -30,7 +30,7 @@ public class GeneralCapitalService extends AbstractCapitalService {
   GeneralCapitalRepository generalCapitalRepository;
 
   @Autowired
-  FundAccountCapitalDetailRepository capitalDetailRepository;
+  CapitalDetailRepository capitalDetailRepository;
 
   @Override
   public ExternalCapitalAccountType getAccountType() {
@@ -62,8 +62,8 @@ public class GeneralCapitalService extends AbstractCapitalService {
       throw new ResourceApplicationExcepiton(ErrorCode.NOT_FIND_CAPITAL_RESOURCE.toString());
     }
 
-    FundAccountCapitalDetail capitalDetail =
-        capitalDetailRepository.findByCapitalPoolAndExternalCapitalAccountIdIsNull(capital);
+    CapitalDetail capitalDetail =
+        capitalDetailRepository.findByCapitalPoolAndCashPoolIsNull(capital);
     if (capitalDetail == null) {
       throw new ResourceApplicationExcepiton(ErrorCode.NOT_FIND_CAPITAL_RESOURCE.toString());
     }

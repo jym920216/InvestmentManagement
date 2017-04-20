@@ -3,11 +3,9 @@ package com.winsigns.investment.inventoryService.resource;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import org.springframework.hateoas.core.Relation;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
 import com.winsigns.investment.inventoryService.controller.FundAccountCapitalPoolController;
-import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
 import com.winsigns.investment.inventoryService.model.FundAccountCapitalPool;
 
 public class FundAccountCapitalPoolResourceAssembler
@@ -23,8 +21,7 @@ public class FundAccountCapitalPoolResourceAssembler
         createResourceWithId(capitalPool.getId(), capitalPool);
 
     capitalPoolResource.add(linkTo(methodOn(FundAccountCapitalPoolController.class)
-        .readFundAccountCapitalDetails(capitalPool.getId())).withRel(
-            FundAccountCapitalDetail.class.getAnnotation(Relation.class).collectionRelation()));
+        .transferToECACashPool(capitalPool.getId(), null)).withRel("to-eca"));
 
     return capitalPoolResource;
   }

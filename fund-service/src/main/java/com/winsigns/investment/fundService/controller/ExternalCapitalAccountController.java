@@ -32,7 +32,6 @@ import com.winsigns.investment.fundService.constant.ExternalCapitalAccountType;
 import com.winsigns.investment.fundService.integration.InventoryServiceIntegration;
 import com.winsigns.investment.fundService.model.ExternalCapitalAccount;
 import com.winsigns.investment.fundService.model.ExternalTradeAccount;
-import com.winsigns.investment.fundService.model.FundAccountCapitalPool;
 import com.winsigns.investment.fundService.resource.ECATypeResource;
 import com.winsigns.investment.fundService.resource.ECATypeResourceAssembler;
 import com.winsigns.investment.fundService.resource.ExternalCapitalAccountResource;
@@ -98,13 +97,8 @@ public class ExternalCapitalAccountController {
     }
 
     // 外部调用获取指定的资金池
-    JsonNode ecaCashPools = inventoryServiceIntegration.getECACashPools(externalCapitalAccountId);
+    JsonNode ecaCashPools = inventoryServiceIntegration.getECACashPools(externalCapitalAccount);
     externalCapitalAccountResource.add("eca-cash-pools", ecaCashPools);
-
-    // 外部调用获取指定的产品账户资金池
-    List<FundAccountCapitalPool> pool =
-        inventoryServiceIntegration.queryFundAccountCapitalDetails(externalCapitalAccount);
-    externalCapitalAccountResource.add("fa-capital-details", pool);
 
     return externalCapitalAccountResource;
   }

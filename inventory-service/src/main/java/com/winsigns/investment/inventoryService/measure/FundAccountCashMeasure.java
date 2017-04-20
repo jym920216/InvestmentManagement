@@ -1,6 +1,5 @@
 package com.winsigns.investment.inventoryService.measure;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +11,18 @@ import com.winsigns.investment.framework.measure.MeasureHost;
 import com.winsigns.investment.framework.measure.MeasureHostType;
 import com.winsigns.investment.framework.measure.TradingMeasureValue;
 import com.winsigns.investment.framework.model.OperatorEntity;
-import com.winsigns.investment.inventoryService.model.FundAccountCapitalDetail;
-import com.winsigns.investment.inventoryService.repository.FundAccountCapitalDetailRepository;
-import com.winsigns.investment.inventoryService.repository.FundAccountCapitalSerialRepository;
+import com.winsigns.investment.inventoryService.model.CapitalDetail;
+import com.winsigns.investment.inventoryService.repository.CapitalSerialRepository;
+import com.winsigns.investment.inventoryService.repository.CapitalDetailRepository;
 
 @Component
 public class FundAccountCashMeasure extends Measure {
 
   @Autowired
-  FundAccountCapitalDetailRepository fundAccountCapitalDetailRepository;
+  CapitalDetailRepository fundAccountCapitalDetailRepository;
 
   @Autowired
-  FundAccountCapitalSerialRepository fundAccountCapitalSerialRepository;
+  CapitalSerialRepository fundAccountCapitalSerialRepository;
 
   @Autowired
   FACapitalDetailMHT faCapitalDetailMHT;
@@ -49,12 +48,12 @@ public class FundAccountCashMeasure extends Measure {
   protected TradingMeasureValue doCalculate(MeasureHost measureHost, boolean isFloat,
       String version) {
 
-    FundAccountCapitalDetail fundAccountCapitalDetail = (FundAccountCapitalDetail) measureHost;
+    CapitalDetail fundAccountCapitalDetail = (CapitalDetail) measureHost;
+    //
+    // Double value = fundAccountCapitalSerialRepository
+    // .findByCapitalDetailAndAssignedDate(fundAccountCapitalDetail, new Date());
 
-    Double value = fundAccountCapitalSerialRepository
-        .findByCapitalDetailAndAssignedDate(fundAccountCapitalDetail, new Date());
-
-    return new TradingMeasureValue(fundAccountCapitalDetail, this, isFloat, version, value);
+    return new TradingMeasureValue(fundAccountCapitalDetail, this, isFloat, version, 0.0);
 
   }
 

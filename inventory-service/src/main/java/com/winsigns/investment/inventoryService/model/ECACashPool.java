@@ -50,13 +50,20 @@ public class ECACashPool extends MeasureHost {
    */
   @Getter
   @Setter
-  private Double unassignedCapital;
+  private Double unassignedCapital = 0.0;
 
-  @OneToMany(mappedBy = "ecaCashPool", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @JsonIgnore
+  /*
+   * 该池子分配出去的资金
+   */
   @Getter
-  @Setter
-  private List<ECACashSerial> ecaCashSerials = new ArrayList<ECACashSerial>();
+  @JsonIgnore
+  @OneToMany(mappedBy = "cashPool", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<CapitalDetail> details = new ArrayList<CapitalDetail>();
+
+  public Double changeUnassignedCapital(Double unassignedCapital) {
+    this.unassignedCapital += unassignedCapital;
+    return this.unassignedCapital;
+  }
 
   @Override
   protected Class<? extends MeasureHostType> defineType() {
