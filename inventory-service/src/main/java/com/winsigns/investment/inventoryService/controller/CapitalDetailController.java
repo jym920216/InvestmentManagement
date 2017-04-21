@@ -44,7 +44,7 @@ public class CapitalDetailController {
    */
   @PostMapping
   public ResponseEntity<?> createCapitalDetail(@RequestBody CreateCapitalDetailCommand command) {
-    if (command.getEcaCashPoolId() == null) { // 如果池子为空，则先创建池子
+    if (command.getFaCapitalPoolId() == null) { // 如果池子为空，则先创建池子
       FundAccountCapitalPool fundAccountCapitalPool =
           capitalServiceManager.createFundAccountCapitalPool(command);
       command.setFaCapitalPoolId(fundAccountCapitalPool.getId());

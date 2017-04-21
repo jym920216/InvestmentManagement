@@ -155,6 +155,11 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
     }
   }
 
+  /**
+   * 处理申请单
+   * 
+   * @param form
+   */
   public void processForm(ResourceApplicationForm form) {
 
     try {
