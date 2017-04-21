@@ -20,19 +20,13 @@ public class ECACashPoolResourceAssembler
     ECACashPoolResource ecaCashPoolResource =
         createResourceWithId(ecaCashPool.getId(), ecaCashPool);
 
-    // ecaCashPoolResource.add(linkTo(methodOn(ECACashPoolController.class)
-    // .transferTo(ecaCashPool.getId(), new TransferCommand())).withRel("transfer-to"));
-    // ecaCashPoolResource.add(linkTo(methodOn(ECACashPoolController.class)
-    // .transferFrom(ecaCashPool.getId(), new TransferCommand())).withRel("transfer-from"));
-    //
-    // ecaCashPoolResource.add(linkTo(methodOn(ECACashPoolController.class)
-    // .allotIn(ecaCashPool.getId(), new AllotAccountCommand())).withRel("allot-in"));
-    // ecaCashPoolResource.add(linkTo(methodOn(ECACashPoolController.class)
-    // .allotOut(ecaCashPool.getId(), new AllotAccountCommand())).withRel("allot-out"));
 
     ecaCashPoolResource.add(linkTo(
         methodOn(ECACashPoolController.class).transferToFundAccount(ecaCashPool.getId(), null))
             .withRel("to-fa"));
+    ecaCashPoolResource
+        .add(linkTo(methodOn(ECACashPoolController.class).transferToECA(ecaCashPool.getId(), null))
+            .withRel("to-eca"));
 
     return ecaCashPoolResource;
   }
