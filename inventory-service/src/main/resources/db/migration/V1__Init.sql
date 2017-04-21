@@ -23,6 +23,7 @@ CREATE TABLE capital_detail
 	id BIGINT NOT NULL auto_increment,
 	capital_pool_id BIGINT NOT NULL,
 	cash_pool_id BIGINT NOT NULL,
+	currency VARCHAR(4) NOT NULL,
 	cash DOUBLE PRECISION,
 	available_capital DOUBLE PRECISION,
 	desirable_capital DOUBLE PRECISION,

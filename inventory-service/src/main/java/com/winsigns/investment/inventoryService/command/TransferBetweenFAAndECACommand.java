@@ -3,7 +3,7 @@ package com.winsigns.investment.inventoryService.command;
 import lombok.Data;
 
 @Data
-public class TransferCommand {
+public class TransferBetweenFAAndECACommand {
 
   private Long faCapitalPoolId;
 

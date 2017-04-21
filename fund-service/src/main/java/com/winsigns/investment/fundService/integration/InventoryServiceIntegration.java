@@ -34,13 +34,17 @@ public class InventoryServiceIntegration extends AbstractIntegration {
 
   private String postECACashPoolPath = "/eca-cash-pools";
 
-  private String getFACapitalDetails = "/capital-details?externalCapitalAccountId=%d";
-
   @Override
   public String getIntegrationName() {
     return INVENTORY_SERVICE;
   }
 
+  /**
+   * 获取资金池及相关信息
+   * 
+   * @param account 外部资金账户
+   * @return
+   */
   @HystrixCommand(fallbackMethod = "defaultECACashPools")
   public JsonNode getECACashPools(ExternalCapitalAccount account) {
 
@@ -82,6 +86,13 @@ public class InventoryServiceIntegration extends AbstractIntegration {
     return this.objectMapper.createArrayNode();
   }
 
+  /**
+   * 创建资金池
+   * 
+   * @param externalCapitalAccountId
+   * @param supportedCurrency
+   * @return
+   */
   public boolean createECACashPools(Long externalCapitalAccountId,
       Collection<CurrencyCode> supportedCurrency) {
 

@@ -1,6 +1,8 @@
 package com.winsigns.investment.inventoryService.model;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 
 import org.springframework.hateoas.core.Relation;
@@ -8,6 +10,7 @@ import org.springframework.hateoas.core.Relation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winsigns.investment.framework.measure.MeasureHost;
 import com.winsigns.investment.framework.measure.MeasureHostType;
+import com.winsigns.investment.inventoryService.constant.CurrencyCode;
 import com.winsigns.investment.inventoryService.measure.FACapitalDetailMHT;
 
 import lombok.Getter;
@@ -30,6 +33,14 @@ public class CapitalDetail extends MeasureHost {
   @JsonIgnore
   @ManyToOne
   private ECACashPool cashPool;
+
+  /*
+   * 币种
+   */
+  @Getter
+  @Setter
+  @Enumerated(EnumType.STRING)
+  private CurrencyCode currency;
 
   // 现金
   @Getter

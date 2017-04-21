@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.winsigns.investment.inventoryService.command.CreateCashPoolCommand;
-import com.winsigns.investment.inventoryService.command.TransferCommand;
+import com.winsigns.investment.inventoryService.command.TransferBetweenECAAndECACommand;
+import com.winsigns.investment.inventoryService.command.TransferBetweenFAAndECACommand;
 import com.winsigns.investment.inventoryService.model.CapitalDetail;
 import com.winsigns.investment.inventoryService.model.ECACashPool;
-import com.winsigns.investment.inventoryService.resource.CapitalDetailResource;
 import com.winsigns.investment.inventoryService.resource.CapitalDetailResourceAssembler;
 import com.winsigns.investment.inventoryService.resource.ECACashPoolResource;
 import com.winsigns.investment.inventoryService.resource.ECACashPoolResourceAssembler;
@@ -100,6 +100,10 @@ public class ECACashPoolController {
   @GetMapping("/{ecaCashPoolId}")
   public ECACashPoolResource readECACashPool(@PathVariable Long ecaCashPoolId) {
     ECACashPool ecaCashPool = ecaCashPoolService.findECACashPool(ecaCashPoolId);
+    return readECACashPool(ecaCashPool);
+  }
+
+  public ECACashPoolResource readECACashPool(ECACashPool ecaCashPool) {
     ECACashPoolResource ecaCashPoolResource =
         new ECACashPoolResourceAssembler().toResourceWithMeasures(ecaCashPool);
 
@@ -121,12 +125,29 @@ public class ECACashPoolController {
    * @return
    */
   @PostMapping("/{ecaCashPoolId}/to-fa")
-  public CapitalDetailResource transferToFundAccount(@PathVariable Long ecaCashPoolId,
-      @RequestBody TransferCommand command) {
+  public ECACashPoolResource transferToFundAccount(@PathVariable Long ecaCashPoolId,
+      @RequestBody TransferBetweenFAAndECACommand command) {
     command.setEcaCashPoolId(ecaCashPoolId);
-    CapitalDetail capitalDetail = capitalDetailService.transferFromECAToFA(command);
+    ECACashPool ecaCashPool = ecaCashPoolService.transferFromECAToFA(command);
 
-    return new CapitalDetailResourceAssembler().toResource(capitalDetail);
+    return readECACashPool(ecaCashPool);
+  }
+
+  /**
+   * 从外部资金账户转出资金到另一个外部资金账户
+   * 
+   * @param ecaCashPoolId
+   * @param command
+   * @return
+   */
+  @PostMapping("/{ecaCashPoolId}/to-eca")
+  public ECACashPoolResource transferToECA(@PathVariable Long ecaCashPoolId,
+      @RequestBody TransferBetweenECAAndECACommand command) {
+
+    command.setSrcECACashPoolId(ecaCashPoolId);
+    ECACashPool ecaCashPool = ecaCashPoolService.transferToECA(command);
+
+    return readECACashPool(ecaCashPool);
   }
 
 }

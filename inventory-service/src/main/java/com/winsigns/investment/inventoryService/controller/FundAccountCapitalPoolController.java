@@ -27,10 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.winsigns.investment.inventoryService.capital.common.CapitalServiceManager;
 import com.winsigns.investment.inventoryService.command.CreateFundAccountCapitalPoolCommand;
 import com.winsigns.investment.inventoryService.command.SetInvestmentLimitCommand;
-import com.winsigns.investment.inventoryService.command.TransferCommand;
+import com.winsigns.investment.inventoryService.command.TransferBetweenFAAndECACommand;
+import com.winsigns.investment.inventoryService.command.TransferBetweenFAAndFACommand;
 import com.winsigns.investment.inventoryService.model.CapitalDetail;
 import com.winsigns.investment.inventoryService.model.FundAccountCapitalPool;
-import com.winsigns.investment.inventoryService.resource.CapitalDetailResource;
 import com.winsigns.investment.inventoryService.resource.CapitalDetailResourceAssembler;
 import com.winsigns.investment.inventoryService.resource.FundAccountCapitalPoolResource;
 import com.winsigns.investment.inventoryService.resource.FundAccountCapitalPoolResourceAssembler;
@@ -94,6 +94,11 @@ public class FundAccountCapitalPoolController {
       @PathVariable Long faCapitalPoolId) {
     FundAccountCapitalPool capitalPool =
         capitalServiceManager.readFundAccountCapitalPool(faCapitalPoolId);
+    return readFundAccountCapitalPool(capitalPool);
+  }
+
+  protected FundAccountCapitalPoolResource readFundAccountCapitalPool(
+      FundAccountCapitalPool capitalPool) {
     FundAccountCapitalPoolResource capitalPoolResource =
         new FundAccountCapitalPoolResourceAssembler().toResource(capitalPool);
 
@@ -119,7 +124,7 @@ public class FundAccountCapitalPoolController {
       @RequestBody SetInvestmentLimitCommand command) {
     command.setFaCapitalPoolId(faCapitalPoolId);
     FundAccountCapitalPool capitalPool = capitalServiceManager.setInvestmentLimit(command);
-    return readFundAccountCapitalPool(capitalPool.getId());
+    return readFundAccountCapitalPool(capitalPool);
   }
 
   /**
@@ -130,12 +135,29 @@ public class FundAccountCapitalPoolController {
    * @return
    */
   @PostMapping("/{faCapitalPoolId}/to-eca")
-  public CapitalDetailResource transferToECACashPool(@PathVariable Long faCapitalPoolId,
-      @RequestBody TransferCommand command) {
+  public FundAccountCapitalPoolResource transferToECACashPool(@PathVariable Long faCapitalPoolId,
+      @RequestBody TransferBetweenFAAndECACommand command) {
 
     command.setFaCapitalPoolId(faCapitalPoolId);
-    CapitalDetail capitalDetail = capitalDetailService.transferFromFAToECA(command);
+    FundAccountCapitalPool capitalPool = capitalServiceManager.transferFromFAToECA(command);
 
-    return new CapitalDetailResourceAssembler().toResource(capitalDetail);
+    return readFundAccountCapitalPool(capitalPool);
+  }
+
+  /**
+   * 从产品账户转到另一个产品账户
+   * 
+   * @param faCapitalDetailId
+   * @param command
+   * @return
+   */
+  @PostMapping("/{faCapitalPoolId}/to-fa")
+  public FundAccountCapitalPoolResource transferToFACapitalPool(@PathVariable Long faCapitalPoolId,
+      @RequestBody TransferBetweenFAAndFACommand command) {
+
+    command.setSrcFACapitalPoolId(faCapitalPoolId);
+    FundAccountCapitalPool capitalPool = capitalServiceManager.transferFromFAToFA(command);
+
+    return readFundAccountCapitalPool(capitalPool);
   }
 }

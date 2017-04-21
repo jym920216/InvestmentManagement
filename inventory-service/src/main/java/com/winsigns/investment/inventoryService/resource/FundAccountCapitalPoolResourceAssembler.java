@@ -22,7 +22,8 @@ public class FundAccountCapitalPoolResourceAssembler
 
     capitalPoolResource.add(linkTo(methodOn(FundAccountCapitalPoolController.class)
         .transferToECACashPool(capitalPool.getId(), null)).withRel("to-eca"));
-
+    capitalPoolResource.add(linkTo(methodOn(FundAccountCapitalPoolController.class)
+        .transferToFACapitalPool(capitalPool.getId(), null)).withRel("to-fa"));
     return capitalPoolResource;
   }
 
