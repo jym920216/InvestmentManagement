@@ -15,10 +15,16 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.winsigns.investment.framework.spring.SpringManager;
 import com.winsigns.investment.inventoryService.capital.common.CapitalServiceManager;
 import com.winsigns.investment.inventoryService.capital.common.ICapitalService;
 import com.winsigns.investment.inventoryService.command.ApplyResourceCommand;
+import com.winsigns.investment.inventoryService.command.ResponseResourceApplication;
 import com.winsigns.investment.inventoryService.exception.ResourceApplicationExcepiton;
 import com.winsigns.investment.inventoryService.integration.FundServiceIntegration;
 import com.winsigns.investment.inventoryService.model.ResourceApplicationForm;
@@ -76,7 +82,10 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
   CapitalServiceManager capitalServiceManager;
 
   @Autowired
-  KafkaTemplate kafkaTemplate;
+  KafkaTemplate<Boolean, ResponseResourceApplication> trueTemplate;
+
+  @Autowired
+  KafkaTemplate<Boolean, String> falseTemplate;
 
   static final String applyKey = "fund-accounts";
   static final String applyKeyTemp = "fund-accounts:%d";
@@ -94,7 +103,9 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
     form.setSecurityId(applyInventoryCommand.getSecurityId());
     form.setCurrency(applyInventoryCommand.getCurrency());
     form.setAppliedCapital(applyInventoryCommand.getAppliedCapital());
-    form.setAppliedPosition(applyInventoryCommand.getPortfolioId());
+    form.setAppliedPosition(applyInventoryCommand.getAppliedPosition());
+    form.setCapitalService(applyInventoryCommand.getCapitalService());
+    form.setPositionService(applyInventoryCommand.getPositionService());
     form.setAppliedTime(new Timestamp(System.currentTimeMillis()));
 
     ResourceApplicationForm formStatus = form.clone();
@@ -162,6 +173,14 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
    */
   public void processForm(ResourceApplicationForm form) {
 
+    PlatformTransactionManager platformTransactionManager =
+        SpringManager.getApplicationContext().getBean(PlatformTransactionManager.class);
+
+    // PROPAGATION_REQUIRES_NEW 表示挂起当前事务，重新启动一个新事务
+    DefaultTransactionDefinition transactionDefinition =
+        new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+    TransactionStatus status = platformTransactionManager.getTransaction(transactionDefinition);
+
     try {
       IPositionService positionService =
           positionServiceManager.getService(form.getPositionService());
@@ -179,12 +198,21 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
 
       capitalService.apply(fundServiceIntegration.getFundAccountId(form.getPortfolioId()),
           form.getCurrency(), form.getAppliedCapital());
+      platformTransactionManager.commit(status);
 
-      kafkaTemplate.send(applyTopic, "true", "true");
+      ResponseResourceApplication application = new ResponseResourceApplication();
+      trueTemplate.send(applyTopic, true, application);
 
     } catch (ResourceApplicationExcepiton e) {
 
-      kafkaTemplate.send(applyTopic, "false", e.getMessage());
+      platformTransactionManager.rollback(status);
+      falseTemplate.send(applyTopic, false, e.getMessage());
+
+    } catch (Exception e) {
+
+      platformTransactionManager.rollback(status);
+      falseTemplate.send(applyTopic, false, e.getMessage());
+
     }
 
   }

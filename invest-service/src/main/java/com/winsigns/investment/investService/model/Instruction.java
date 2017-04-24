@@ -125,11 +125,20 @@ public class Instruction extends AbstractEntity {
   @Setter
   private InstructionBasket instructionBasket;
 
+  // 提交时间
+  @Getter
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date commitTime;
+
   // 交易员
   @Getter
   @Setter
   // TODO 暂时写死，随后增加分配交易员
   private Long traderId = 123456L;
+
+  public void setCommitTime() {
+    this.commitTime = new Timestamp(System.currentTimeMillis());
+  }
 
   public void addInstructionMessage(InstructionMessage message) {
     this.messages.add(message);

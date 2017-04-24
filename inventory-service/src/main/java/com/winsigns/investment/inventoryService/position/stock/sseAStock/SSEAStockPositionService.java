@@ -39,18 +39,18 @@ public class SSEAStockPositionService extends AbstractPositionService {
         position.setPortfolioId(portfolioId);
         position.setSecurityId(securityId);
 
-        position.changePositionQuantity(quantity);
+        position.changeFloatPositionQuantity(quantity);
       } else {
-        position.changePositionQuantity(quantity);
+        position.changeFloatPositionQuantity(quantity);
       }
       position = stockPositionRepository.save(position);
     } else {// 减少持仓
       if (position == null) {
         throw new ResourceApplicationExcepiton(ErrorCode.NOT_FIND_POSITION_RESOURCE.toString());
       } else {
-        position.changeCanSellPositionQuantity(quantity);
-        position.changePositionQuantity(quantity);
-        if (position.getCanSellPositionQuantity().longValue() < 0) {
+        position.changeFloatCanSellPositionQuantity(quantity);
+        position.changeFloatPositionQuantity(quantity);
+        if (position.getFloatCanSellPositionQuantity().longValue() < 0) {
           throw new ResourceApplicationExcepiton(ErrorCode.CAN_SELL_POSITION_NOT_ENOUGH.toString());
         }
         position = stockPositionRepository.save(position);

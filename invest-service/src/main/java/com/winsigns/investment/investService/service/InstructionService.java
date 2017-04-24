@@ -300,6 +300,7 @@ public class InstructionService {
 
       if (InvestServiceManager.getInstance().commitInstruction(thisInstruction)) {
         thisInstruction.setExecutionStatus(InstructionStatus.COMMITING);
+        thisInstruction.setCommitTime();
         instructionRepository.save(thisInstruction);
       } else {
         thisInstruction
