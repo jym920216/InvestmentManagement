@@ -22,11 +22,11 @@ public class ApplyResourceCommand {
   // 资金服务
   private String capitalService;
 
-  // 持仓服务
-  private String positionService;
-
   // 申请的资金
   private Double appliedCapital = 0.0;
+
+  // 持仓服务
+  private String positionService;
 
   // 申请的持仓
   private Long appliedPosition = 0L;

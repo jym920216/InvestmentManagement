@@ -58,7 +58,7 @@ public class VirtualDone extends OperatorEntity {
   @Setter
   private String tradeService;
 
-  // 外部交易账户id
+  // 外部资金账户id
   @Getter
   @Setter
   private Long externalCapitalAccountId;
