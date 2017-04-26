@@ -3,7 +3,7 @@ buildscript {
 		springBootVersion = '1.5.1.RELEASE'
 	}
 	repositories {
-        maven { url "http://repo.winsigns-dev.com/artifactory/mavenCentral" }
+		mavenCentral()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -24,9 +24,9 @@ jar {
 sourceCompatibility = 1.8
 
 repositories {
-    maven { url "http://repo.winsigns-dev.com/artifactory/mavenCentral" }
-    maven { url "http://repo.winsigns-dev.com/artifactory/spring-snapshot" }
-    maven { url "http://repo.winsigns-dev.com/artifactory/spring-milestone" }
+        mavenCentral()
+        maven {url "https://repo.spring.io/snapshot"}
+        maven {url "https://repo.spring.io/milestone"}
 }
 
 

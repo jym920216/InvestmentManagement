@@ -1,4 +1,4 @@
-package com.winsigns.investment.inventoryService.command;
+package com.winsigns.investment.tradeService.command;
 
 import lombok.Data;
 

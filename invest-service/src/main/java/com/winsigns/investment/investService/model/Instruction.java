@@ -24,6 +24,8 @@ import org.springframework.hateoas.core.Relation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winsigns.investment.framework.model.AbstractEntity;
 import com.winsigns.investment.investService.constant.CurrencyCode;
+import com.winsigns.investment.investService.constant.InstructionMessageCode;
+import com.winsigns.investment.investService.constant.InstructionMessageType;
 import com.winsigns.investment.investService.constant.InstructionStatus;
 import com.winsigns.investment.investService.constant.InstructionVolumeType;
 
@@ -142,6 +144,19 @@ public class Instruction extends AbstractEntity {
 
   public void addInstructionMessage(InstructionMessage message) {
     this.messages.add(message);
+  }
+
+  public void addInstructionMessage(String fieldName, InstructionMessageType messageType,
+      InstructionMessageCode messageCode) {
+    InstructionMessage message = new InstructionMessage(this, fieldName, messageType, messageCode);
+    this.messages.add(message);
+  }
+
+  public void addInstructionMessage(String fieldName, InstructionMessageType messageType,
+      InstructionMessageCode messageCode, String message) {
+    InstructionMessage thisMessage =
+        new InstructionMessage(this, fieldName, messageType, messageCode, message);
+    this.messages.add(thisMessage);
   }
 
   /**
