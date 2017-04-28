@@ -19,7 +19,7 @@ import com.winsigns.investment.investService.constant.InstructionMessageCode;
 import com.winsigns.investment.investService.constant.InstructionMessageType;
 import com.winsigns.investment.investService.constant.InstructionOperatorType;
 import com.winsigns.investment.investService.constant.InstructionStatus;
-import com.winsigns.investment.investService.constant.InstructionVolumeType;
+import com.winsigns.investment.investService.instruction.InstructionCheckManager;
 import com.winsigns.investment.investService.integration.FundServiceIntegration;
 import com.winsigns.investment.investService.model.Instruction;
 import com.winsigns.investment.investService.model.InstructionMessage;
@@ -54,6 +54,9 @@ public class InstructionService {
 
   @Autowired
   InvestServiceManager investServiceManager;
+
+  @Autowired
+  InstructionCheckManager instructionCheckManager;
 
   @Autowired
   InstructionRepository instructionRepository;
@@ -99,8 +102,8 @@ public class InstructionService {
 
     newInstruction.setInvestManagerId(instructionCommand.getInvestManagerId());
     newInstruction.setExecutionStatus(InstructionStatus.DRAFT);
-    newInstruction = instructionRepository.save(newInstruction);
-    check(newInstruction);
+
+    instructionCheckManager.checkAndUpdate(newInstruction);
     return instructionRepository.save(newInstruction);
   }
 
@@ -132,80 +135,8 @@ public class InstructionService {
     thisInstruction.setQuantity(instructionCommand.getQuantity());
     thisInstruction.setAmount(instructionCommand.getAmount());
 
-    check(thisInstruction);
+    instructionCheckManager.checkAndUpdate(thisInstruction);
     return instructionRepository.save(thisInstruction);
-  }
-
-  protected void check(Instruction thisInstruction) {
-    // instructionMessageRepository.deleteByInstruction(thisInstruction);
-    if (!thisInstruction.getMessages().isEmpty()) {
-      instructionMessageRepository.delete(thisInstruction.getMessages());
-      thisInstruction.getMessages().clear();
-    }
-    checkPortfolio(thisInstruction);
-    checkSecurityAndDirection(thisInstruction);
-    checkVolumeType(thisInstruction);
-    // return instructionRepository.save(thisInstruction);
-  }
-
-  /**
-   * 检查指令的投资组合信息
-   * 
-   * @param thisInstruction 需要检查的指令
-   */
-  protected void checkPortfolio(Instruction thisInstruction) {
-
-    Long portfolioId = thisInstruction.getPortfolioId();
-
-    if (portfolioId == null) {
-      thisInstruction.addInstructionMessage(new InstructionMessage(thisInstruction, "portfolioId",
-          InstructionMessageType.ERROR, InstructionMessageCode.PORTFOLIO_NOT_NULL));
-    } else {
-      // 检查该投资组合是否为该投资经理管理
-      Long investManagerId = fundService.getPortfolioInvestManager(portfolioId);
-      if (investManagerId == null
-          || !investManagerId.equals(thisInstruction.getInvestManagerId())) {
-        thisInstruction.addInstructionMessage(
-            new InstructionMessage(thisInstruction, "portfolioId", InstructionMessageType.ERROR,
-                InstructionMessageCode.PORTFOLIO_NOT_MATCHED_INVESTMANAGER));
-      }
-    }
-  }
-
-  /**
-   * 检查指令的投资标的和方向
-   * 
-   * @param thisInstruction
-   */
-  protected void checkSecurityAndDirection(Instruction thisInstruction) {
-
-    if (thisInstruction.getSecurityId() == null) {
-      thisInstruction.addInstructionMessage(new InstructionMessage(thisInstruction, "securityId",
-          InstructionMessageType.ERROR, InstructionMessageCode.INVEST_SECURITY_CANNOT_NULL));
-    }
-
-    if (thisInstruction.getInvestService() == null) {
-      thisInstruction.addInstructionMessage(new InstructionMessage(thisInstruction, "investService",
-          InstructionMessageType.ERROR, InstructionMessageCode.INVEST_SERVICE_CANNOT_NULL));
-    }
-
-    if (thisInstruction.getInvestType() == null) {
-      thisInstruction.addInstructionMessage(new InstructionMessage(thisInstruction, "investType",
-          InstructionMessageType.ERROR, InstructionMessageCode.INVEST_TYPE_CANNOT_NULL));
-    }
-  }
-
-  /**
-   * 检查数量类型是否匹配
-   * 
-   * @param thisInstruction
-   */
-  protected void checkVolumeType(Instruction thisInstruction) {
-    if (!InstructionVolumeType.contains(thisInstruction.getVolumeType())) {
-      thisInstruction.addInstructionMessage(
-          new InstructionMessage(thisInstruction, "volumeType", InstructionMessageType.ERROR,
-              InstructionMessageCode.INSTRUCTION_VOLUME_TYPE_NOT_SUPPORT));
-    }
   }
 
   /**
@@ -311,7 +242,7 @@ public class InstructionService {
     }
 
     if (!thisInstruction.isBasket()) {
-      if (!commitCheck(thisInstruction)) {
+      if (!instructionCheckManager.commitCheck(thisInstruction)) {
         return thisInstruction;
       }
 
@@ -329,16 +260,6 @@ public class InstructionService {
     }
 
     return thisInstruction;
-  }
-
-  protected boolean commitCheck(Instruction thisInstruction) {
-    check(thisInstruction);
-    for (InstructionMessage message : thisInstruction.getMessages()) {
-      if (message.getMessageType().equals(InstructionMessageType.ERROR)) {
-        return false;
-      }
-    }
-    return true;
   }
 
   /**
