@@ -234,13 +234,6 @@ public class InstructionService {
 
     Assert.notNull(thisInstruction);
 
-    if (!thisInstruction.getExecutionStatus().isSupportedOperator(InstructionOperatorType.COMMIT)) {
-      thisInstruction.addInstructionMessage(
-          new InstructionMessage(thisInstruction, "executionStatus", InstructionMessageType.ERROR,
-              InstructionMessageCode.INSTRUCTION_OPERATOR_NOT_SUPPORT));
-      return thisInstruction;
-    }
-
     if (!thisInstruction.isBasket()) {
       if (!instructionCheckManager.commitCheck(thisInstruction)) {
         return thisInstruction;
