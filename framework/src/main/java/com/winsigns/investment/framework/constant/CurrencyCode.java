@@ -1,11 +1,12 @@
-package com.winsigns.investment.investService.constant;
+package com.winsigns.investment.framework.constant;
 
 import com.winsigns.investment.framework.i18n.i18nHelper;
 
 /**
+ * 将币种放入框架，并提供国际化
  * 
  * @author yimingjin
- *
+ * @since 0.0.4
  */
 public enum CurrencyCode {
   // 人民币
