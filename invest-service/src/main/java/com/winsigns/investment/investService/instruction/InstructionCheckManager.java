@@ -3,10 +3,9 @@ package com.winsigns.investment.investService.instruction;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.winsigns.investment.framework.spring.SpringManager;
 import com.winsigns.investment.investService.constant.InstructionMessageCode;
@@ -67,7 +66,7 @@ public class InstructionCheckManager {
     thisInstruction.getMessages().clear();
     List<InstructionMessage> messages = check(thisInstruction);
     thisInstruction.setMessages(messages);
-    instructionMessageRepository.save(messages);
+    // instructionMessageRepository.save(messages);
   }
 
   /**
