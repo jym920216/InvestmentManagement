@@ -1,0 +1,1 @@
+return redis.call("exists",KEYS[1])

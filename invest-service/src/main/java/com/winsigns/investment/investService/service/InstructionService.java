@@ -93,6 +93,7 @@ public class InstructionService {
    * @param instructionCommand
    * @return
    */
+  @Transactional
   public Instruction addInstruction(CreateInstructionCommand instructionCommand) {
 
     // 投资经理必须输入，以后可能在controller中通过session赋值

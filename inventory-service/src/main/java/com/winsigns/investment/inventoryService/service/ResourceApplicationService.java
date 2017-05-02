@@ -1,5 +1,6 @@
 package com.winsigns.investment.inventoryService.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -9,13 +10,16 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -140,6 +144,17 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
 
         Set<String> keys = keyTemplate.boundSetOps(applyKey).members();
         for (String key : keys) {
+
+          DefaultRedisScript<ResourceApplicationForm> script =
+              new DefaultRedisScript<ResourceApplicationForm>();
+          script.setScriptSource(
+              new ResourceScriptSource(new ClassPathResource("/resourceApply.lua")));
+          script.setResultType(ResourceApplicationForm.class);// Must Set
+
+          System.out.println("script:" + script.getScriptAsString());
+          ResourceApplicationForm isExist =
+              inventoryTemplate.execute(script, Collections.singletonList("k2"), new Object[] {});
+
           ResourceApplicationForm form = null;
 
           form = inventoryTemplate.boundListOps(key).index(-1);
