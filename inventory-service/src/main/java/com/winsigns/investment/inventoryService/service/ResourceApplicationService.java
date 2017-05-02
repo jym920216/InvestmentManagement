@@ -141,12 +141,14 @@ public class ResourceApplicationService extends Thread implements SmartInitializ
         Set<String> keys = keyTemplate.boundSetOps(applyKey).members();
         for (String key : keys) {
           ResourceApplicationForm form = null;
+
           form = inventoryTemplate.boundListOps(key).index(-1);
           // TODO 这个线程的处理逻辑仍需要优化
           // 1.redis的事务
           // 2.该线程的启动必须是spring全部初始化完毕
           if (form != null && form.getStatus().equals(ApplyStatus.INIT)) {
             form = inventoryTemplate.boundListOps(key).rightPop(1, TimeUnit.MILLISECONDS);
+
             form = resourceApplicationFormRepository.save(form);
             processForm(form);
             inventoryTemplate.boundListOps(key).rightPop(1, TimeUnit.MILLISECONDS);
