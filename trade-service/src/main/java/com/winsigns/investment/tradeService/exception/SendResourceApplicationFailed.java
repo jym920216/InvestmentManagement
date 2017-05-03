@@ -8,7 +8,7 @@ import com.winsigns.investment.framework.exception.CommonException;
  * @author yimingjin
  *
  */
-public class SendResourceApplicationFailed extends ResourceApplicationExcepiton {
+public class SendResourceApplicationFailed extends CommonException {
 
   /**
    * 
