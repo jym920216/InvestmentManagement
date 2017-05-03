@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
-import com.winsigns.investment.framework.exception.CommonException;
 import com.winsigns.investment.framework.integration.AbstractIntegration;
 import com.winsigns.investment.framework.integration.ServiceNotFoundException;
 import com.winsigns.investment.tradeService.command.ApplyResourceCommand;
@@ -39,7 +38,7 @@ public class InventoryServiceIntegration extends AbstractIntegration {
    * @param command
    * @return
    */
-  public void applyResource(ApplyResourceCommand command) throws CommonException {
+  public void applyResource(ApplyResourceCommand command) throws SendResourceApplicationFailed {
 
     String language = this.getHeaderParam("accept-language");
     command.setLanguage(language);

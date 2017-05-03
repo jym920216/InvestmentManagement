@@ -68,8 +68,7 @@ public abstract class AbstractTradeService implements ITradeService {
   }
 
   @Override
-  public void virtualDone(CommitInstructionCommand command, Resource resource)
-      throws CommonException {
+  public void virtualDone(CommitInstructionCommand command, Resource resource) {
 
     VirtualDone thisDone = new VirtualDone();
 
