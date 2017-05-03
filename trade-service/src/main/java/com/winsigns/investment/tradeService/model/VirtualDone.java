@@ -9,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import com.winsigns.investment.framework.constant.CurrencyCode;
+import com.winsigns.investment.framework.exception.CommonException;
 import com.winsigns.investment.framework.measure.MeasureHost;
 import com.winsigns.investment.framework.model.OperatorEntity;
 import com.winsigns.investment.framework.spring.SpringManager;
@@ -105,7 +106,7 @@ public class VirtualDone extends OperatorEntity {
    * 虚拟成交申请资源
    * 
    */
-  public void applyResource() {
+  public void applyResource() throws CommonException {
 
     ITradeService tradeService = getTradeServiceManager().getService(this.getTradeService());
 
