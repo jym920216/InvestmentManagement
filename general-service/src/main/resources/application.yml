@@ -2,7 +2,7 @@ app:
   version: "%%VERSION%%"
   
 server:
-  port: 10013
+  port: 10014
 
 spring:
   datasource:
@@ -13,7 +13,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
   redis:
-    database: 3
+    database: 4
     password:    
     pool: 
       max-idle: 8 
@@ -22,11 +22,11 @@ spring:
       max-wait: -1 
   kafka:
     consumer:
-      group-id: trade-service  
+      group-id: general-service  
     producer:
       key-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      
+          
 eureka:
   instance:
     preferIpAddress: true
@@ -41,14 +41,14 @@ management:
 
 kafka:
   stream:
-    appid: trade-service-kafka-stream
+    appid: general-service-kafka-stream
 
 ---
 
 spring:
   profiles: dev
   datasource:
-    url: jdbc:mysql://localhost:3306/tradedb?characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/generaldb?characterEncoding=utf-8
     username: mariadb
     password: mariadb
   kafka:
@@ -70,7 +70,7 @@ kafka:
 spring:
   profiles: prod
   datasource:
-    url: jdbc:mysql://mariadb:3309/tradedb?characterEncoding=utf-8
+    url: jdbc:mysql://mariadb:3310/generaldb?characterEncoding=utf-8
 
 eureka:
   client:

@@ -2,7 +2,7 @@ app:
   version: "%%VERSION%%"
   
 server:
-  port: 10013
+  port: 10014
 
 spring:
   datasource:
@@ -12,17 +12,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
-  redis:
-    database: 3
-    password:    
-    pool: 
-      max-idle: 8 
-      min-idle: 0 
-      max-active: 8 
-      max-wait: -1 
   kafka:
+    bootstrap-servers: localhost:9092
     consumer:
-      group-id: trade-service  
+      group-id: trading-office-service  
     producer:
       key-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -41,36 +34,32 @@ management:
 
 kafka:
   stream:
-    appid: trade-service-kafka-stream
+    appid: trading-office-kafka-stream
+  broker:
+    host: localhost:9092
+  zookeeper:
+    host: localhost:2181
 
 ---
 
 spring:
   profiles: dev
   datasource:
-    url: jdbc:mysql://localhost:3306/tradedb?characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/tradingofficedb?characterEncoding=utf-8
     username: mariadb
     password: mariadb
-  kafka:
-    bootstrap-servers: localhost:9092
-  redis: 
-    host: localhost
-    port: 6379 
+
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:10100/eureka/
-kafka:
-  broker:
-    host: localhost:9092
-  zookeeper:
-    host: localhost:2181
+
 ---
 
 spring:
   profiles: prod
   datasource:
-    url: jdbc:mysql://mariadb:3309/tradedb?characterEncoding=utf-8
+    url: jdbc:mysql://mariadb:3309/tradingofficedb?characterEncoding=utf-8
 
 eureka:
   client:
