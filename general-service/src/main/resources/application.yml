@@ -26,7 +26,6 @@ spring:
     producer:
       key-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-          
 eureka:
   instance:
     preferIpAddress: true

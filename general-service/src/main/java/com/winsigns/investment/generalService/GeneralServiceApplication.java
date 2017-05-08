@@ -9,10 +9,10 @@ import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableHypermediaSupport(type = {HypermediaType.HAL})
-public class SequenceServiceApplication {
+public class GeneralServiceApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(SequenceServiceApplication.class, args);
+    SpringApplication.run(GeneralServiceApplication.class, args);
   }
 }
 

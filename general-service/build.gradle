@@ -41,21 +41,25 @@ configurations {
 }
 
 dependencies {
+    compile('com.winsigns:investment-framework:0.0.4-SNAPSHOT')
 	
-	compile('org.springframework.boot:spring-boot-starter-hateoas')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.springframework.boot:spring-boot-starter-undertow')
-	compile('org.springframework.cloud:spring-cloud-starter-eureka')
+    compile('org.springframework.boot:spring-boot-starter-hateoas')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-undertow')
+    compile('org.springframework.cloud:spring-cloud-starter-eureka')
 
-	compile('org.springframework.boot:spring-boot-starter-data-redis')
+    compile('org.springframework.boot:spring-boot-starter-data-redis')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('mysql:mysql-connector-java')
+    compile('com.jayway.jsonpath:json-path')
+    
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-logging')
+    compile('net.logstash.logback:logstash-logback-encoder:4.8')
 	
-	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.boot:spring-boot-starter-logging')
-	compile('net.logstash.logback:logstash-logback-encoder:4.8')
-	
-	compile('org.projectlombok:lombok')
+    compile('org.projectlombok:lombok')
 
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
 def getVersion() {

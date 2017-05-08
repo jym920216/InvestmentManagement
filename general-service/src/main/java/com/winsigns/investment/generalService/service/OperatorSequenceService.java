@@ -3,16 +3,17 @@ package com.winsigns.investment.generalService.service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-@Service
-public class OperatorSequenceService {
+import com.winsigns.investment.generalService.model.OperatorSequence;
 
-  Logger log = LoggerFactory.getLogger(OperatorSequenceService.class);
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@Slf4j
+public class OperatorSequenceService {
 
   @Autowired
   private StringRedisTemplate redisTemplate;
@@ -22,20 +23,17 @@ public class OperatorSequenceService {
   /**
    * 获取一个操作序号
    * 
-   * @param date 指定日期，空则取系统日期
    * @return 序列化后的操作序号
    */
-  public synchronized String getOperatorSequence() {
+  public synchronized OperatorSequence getOperatorSequence() {
     String nowDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
     String key = STR_OPERATOR_SEQUENCE_FIX + nowDate;
 
     Long currentSequence = redisTemplate.opsForValue().increment(key, 1L);
-    return formatSequence(nowDate, currentSequence);
+    OperatorSequence operatorSequence = OperatorSequence.formatSequence(nowDate, currentSequence);
+    log.info(operatorSequence.toString());
+    return operatorSequence;
 
-  }
-
-  private String formatSequence(String date, Long nowVersion) {
-    return String.format("%s%012d", date.substring(2), nowVersion);
   }
 
 }
