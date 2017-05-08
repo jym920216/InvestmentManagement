@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.winsigns.investment.framework.hal.HALResponse;
 import com.winsigns.investment.generalService.resource.DateResource;
 import com.winsigns.investment.generalService.resource.OperatorSequenceResource;
+import com.winsigns.investment.generalService.resource.TimeResource;
 
 
 /**
@@ -29,6 +30,7 @@ public class RootController {
 
     halResponse.addCollectionLink(OperatorSequenceController.class, OperatorSequenceResource.class);
     halResponse.addCollectionLink(SystemDateController.class, DateResource.class);
+    halResponse.addCollectionLink(SystemTimeController.class, TimeResource.class);
 
     return new ResponseEntity<>(halResponse, HttpStatus.OK);
   }

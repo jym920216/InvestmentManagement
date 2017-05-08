@@ -49,7 +49,6 @@ services:
   general-service:
     build: general-service
     command: /bin/bash -c "wait-for-it -t 0 localhost:6379 && /app/start /app/general-service-latest.jar"
-    container_name: general-service
     network_mode: "host"
     ports:
       - 10014:10014
