@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.winsigns.investment.framework.model.AbstractEntity;
 import com.winsigns.investment.tradingOfficeService.constant.TraderStatus;
 
@@ -15,6 +16,7 @@ public class Trader extends AbstractEntity {
 
   @Getter
   @Setter
+  @JsonProperty("id")
   private Long traderId;
 
   @Getter

@@ -17,6 +17,7 @@ CREATE TABLE instruction
 	id BIGINT NOT NULL auto_increment,
 	instruction_id BIGINT NOT NULL,
 	trader_id BIGINT,
+	allotted_time TIMESTAMP,
 	PRIMARY KEY (id),
 	UNIQUE KEY (instruction_id) 
 )CHARACTER SET = utf8;

@@ -1,13 +1,17 @@
 package com.winsigns.investment.tradingOfficeService.strategy;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.winsigns.investment.framework.chrono.ChronoIntegration;
+import com.winsigns.investment.framework.integration.ServiceNotFoundException;
 import com.winsigns.investment.framework.manager.ManagerSupport;
 import com.winsigns.investment.tradingOfficeService.command.SetStrategyCommand;
 import com.winsigns.investment.tradingOfficeService.exception.StrategyNotSupportedExcepiton;
+import com.winsigns.investment.tradingOfficeService.integration.InvestServiceIntegration;
 import com.winsigns.investment.tradingOfficeService.model.CurrentStrategy;
 import com.winsigns.investment.tradingOfficeService.model.CurrentStrategy.CurrentStrategyType;
 import com.winsigns.investment.tradingOfficeService.model.Instruction;
@@ -24,7 +28,10 @@ public class StrategyManager extends ManagerSupport<AllocationStrategy> {
   CurrentStrategyRepository currentStrategyRepository;
 
   @Autowired
-  ChronoIntegration chronoIntegration;
+  ChronoIntegration chrono;
+
+  @Autowired
+  InvestServiceIntegration investService;
 
   @Autowired
   InstructionRepository instructionRepository;
@@ -52,7 +59,7 @@ public class StrategyManager extends ManagerSupport<AllocationStrategy> {
       currentStrategy = new CurrentStrategy();
     }
     currentStrategy.setCurrentStrategyName(strategy.getName());
-    currentStrategy.setUpdateTime(chronoIntegration.getTimeStamp());
+    currentStrategy.setUpdateTime(chrono.getTimeStamp());
 
     return currentStrategyRepository.save(currentStrategy);
   }
@@ -74,9 +81,31 @@ public class StrategyManager extends ManagerSupport<AllocationStrategy> {
 
   @Scheduled(fixedRate = 1000)
   public void allot() {
-    log.info("每1秒执行一次。开始……");
-    // statusTask.healthCheck();
-    log.info("每1秒执行一次。结束。");
+    try {
+      List<Instruction> instructions = investService.getUnassignInstructions();
+
+      instructions.forEach(thisInstruction -> {
+
+        Long traderId = this.allot(thisInstruction);
+        if (traderId != null) { // 分配成功
+          Instruction instruction =
+              instructionRepository.findByInstructionId(thisInstruction.getInstructionId());
+          if (instruction == null) {
+            instruction = thisInstruction;
+          }
+          instruction.setTraderId(traderId);
+          instruction.setAllottedTime(chrono.getTimeStamp());
+          instructionRepository.save(instruction);
+          log.info("指令%d分配完成", thisInstruction.getInstructionId());
+
+          investService.updateInstructionTrader(instruction.getInstructionId(),
+              instruction.getTraderId());
+
+        }
+      });
+    } catch (ServiceNotFoundException e) {
+      log.error(e.getFullMessage());
+    }
   }
 
 }

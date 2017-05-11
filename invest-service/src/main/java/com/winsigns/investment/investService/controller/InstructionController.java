@@ -8,6 +8,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,6 +30,7 @@ import com.winsigns.investment.framework.hal.Resources;
 import com.winsigns.investment.investService.command.BatchDeleteInstructionCommand;
 import com.winsigns.investment.investService.command.CreateInstructionCommand;
 import com.winsigns.investment.investService.command.UpdateInstructionCommand;
+import com.winsigns.investment.investService.command.UpdateInstructionTraderCommand;
 import com.winsigns.investment.investService.model.Instruction;
 import com.winsigns.investment.investService.resource.InstructionResource;
 import com.winsigns.investment.investService.resource.InstructionResourceAssembler;
@@ -60,6 +62,63 @@ public class InstructionController {
         .findNormalInstructionByCondition(investManagerId, traderId, beginDate, endDate);
     return new Resources<InstructionResource>(
         new InstructionResourceAssembler().toResources(instructions), link, deleteLink);
+  }
+
+  /**
+   * 投资经理获取指令
+   * 
+   * @param investManagerId
+   * @param beginDate
+   * @param endDate
+   * @return
+   */
+  @GetMapping("/investmanager")
+  public Resources<InstructionResource> getInstructionsByInvestManager(
+      @RequestParam(required = false) Long investManagerId,
+      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date beginDate,
+      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date endDate) {
+    Link link = linkTo(methodOn(InstructionController.class)
+        .getInstructionsByInvestManager(investManagerId, beginDate, endDate)).withSelfRel();
+    List<Instruction> instructions =
+        instructionService.getInstructionsByInvestManager(investManagerId, beginDate, endDate);
+    return new Resources<InstructionResource>(
+        new InstructionResourceAssembler().toResources(instructions), link);
+  }
+
+  /**
+   * 交易员获取指令
+   * 
+   * @param traderId
+   * @param beginDate
+   * @param endDate
+   * @return
+   */
+  @GetMapping("/trader")
+  public Resources<InstructionResource> getInstructionsByTrader(
+      @RequestParam(required = false) Long traderId,
+      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date beginDate,
+      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date endDate) {
+    Link link = linkTo(
+        methodOn(InstructionController.class).getInstructionsByTrader(traderId, beginDate, endDate))
+            .withSelfRel();
+    List<Instruction> instructions =
+        instructionService.getInstructionsByTrader(traderId, beginDate, endDate);
+    return new Resources<InstructionResource>(
+        new InstructionResourceAssembler().toResources(instructions), link);
+  }
+
+  /**
+   * 未分配的指令
+   * 
+   * @return
+   */
+  @GetMapping("/unassign")
+  public Resources<InstructionResource> getUnassignedInstructions() {
+    Link link =
+        linkTo(methodOn(InstructionController.class).getUnassignedInstructions()).withSelfRel();
+    List<Instruction> instructions = instructionService.getUnassignedInstructions();
+    return new Resources<InstructionResource>(
+        new InstructionResourceAssembler().toResources(instructions), link);
   }
 
   /**
@@ -144,5 +203,20 @@ public class InstructionController {
     Instruction thisInstruction = instructionService.commitInstruction(instructionId);
 
     return new InstructionResourceAssembler().toResource(thisInstruction);
+  }
+
+  /**
+   * 修改一条指令的交易员
+   * 
+   * @param instructionId
+   * @param instructionCommand
+   * @return
+   */
+  @PutMapping("/{instructionId}/trader")
+  public InstructionResource updateInstructionForTrader(@PathVariable Long instructionId,
+      @RequestBody UpdateInstructionTraderCommand command) {
+    command.setInstructionId(instructionId);
+    return new InstructionResourceAssembler()
+        .toResource(instructionService.updateInstructionForTrader(command));
   }
 }

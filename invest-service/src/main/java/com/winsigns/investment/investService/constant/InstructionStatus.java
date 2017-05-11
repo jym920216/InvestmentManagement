@@ -51,6 +51,7 @@ public enum InstructionStatus {
     supportOperatorTypes.put(COMMITING,
         asList(InstructionOperatorType.MODIFY, InstructionOperatorType.RECALL));
     supportOperatorTypes.put(DELETED, new ArrayList<InstructionOperatorType>());
+    supportOperatorTypes.put(ASSIGNING, asList(InstructionOperatorType.MODIFY));
   }
 
   /**

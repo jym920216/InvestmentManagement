@@ -133,8 +133,7 @@ public class Instruction extends AbstractEntity {
   // 交易员
   @Getter
   @Setter
-  // TODO 暂时写死，随后增加分配交易员
-  private Long traderId = 123456L;
+  private Long traderId;
 
   public void setCommitTime() {
     this.commitTime = new Timestamp(System.currentTimeMillis());

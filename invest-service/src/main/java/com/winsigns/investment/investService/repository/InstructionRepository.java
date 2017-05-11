@@ -24,4 +24,7 @@ public interface InstructionRepository extends JpaRepository<Instruction, Long> 
   public List<Instruction> findByCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(
       Date beginDate, Date endDate, InstructionStatus deleted);
 
+  public List<Instruction> findByTraderIdIsNullAndExecutionStatusAndInstructionBasketIsNullOrderByCreateTimeDesc(
+      InstructionStatus status);
+
 }

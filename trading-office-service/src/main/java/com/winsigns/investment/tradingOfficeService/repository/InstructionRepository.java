@@ -6,4 +6,6 @@ import com.winsigns.investment.tradingOfficeService.model.Instruction;
 
 public interface InstructionRepository extends JpaRepository<Instruction, Long> {
 
+  public Instruction findByInstructionId(Long instructionId);
+
 }
