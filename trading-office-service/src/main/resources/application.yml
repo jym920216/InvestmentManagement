@@ -2,7 +2,7 @@ app:
   version: "%%VERSION%%"
   
 server:
-  port: 10014
+  port: 10015
 
 spring:
   datasource:

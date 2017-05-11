@@ -67,4 +67,5 @@ public class CommonException extends RuntimeException {
     str = getMessage() + "-" + str;
     return str.substring(0, str.length() - 1);
   }
+
 }

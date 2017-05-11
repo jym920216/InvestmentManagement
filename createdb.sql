@@ -12,3 +12,6 @@ GRANT ALL ON tradedb.* TO 'mariadb'@'%';
 
 CREATE DATABASE IF NOT EXISTS generaldb;
 GRANT ALL ON generaldb.* TO 'mariadb'@'%';
+
+CREATE DATABASE IF NOT EXISTS tradingofficedb;
+GRANT ALL ON tradingofficedb.* TO 'mariadb'@'%';

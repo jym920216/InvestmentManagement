@@ -8,9 +8,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-public class TradingOffice extends AbstractEntity {
+public class Instruction extends AbstractEntity {
 
-  @Getter
   @Setter
-  private Long userId;
+  @Getter
+  private Long instructionId;
+
+  @Setter
+  @Getter
+  private Long traderId;
 }

@@ -22,3 +22,7 @@ cd -
 cd trade-service
 ./gradlew flywayMigrate
 cd -
+
+cd general-service
+./gradlew flywayMigrate
+cd -
