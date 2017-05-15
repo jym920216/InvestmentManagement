@@ -15,10 +15,13 @@ import org.springframework.util.Assert;
 import com.winsigns.investment.investService.command.CreateInstructionCommand;
 import com.winsigns.investment.investService.command.ResponseResourceApplication;
 import com.winsigns.investment.investService.command.UpdateInstructionCommand;
+import com.winsigns.investment.investService.command.UpdateInstructionTraderCommand;
 import com.winsigns.investment.investService.constant.InstructionMessageCode;
 import com.winsigns.investment.investService.constant.InstructionMessageType;
 import com.winsigns.investment.investService.constant.InstructionOperatorType;
 import com.winsigns.investment.investService.constant.InstructionStatus;
+import com.winsigns.investment.investService.constant.KafkaTopics;
+import com.winsigns.investment.investService.exception.InstructionInvalidException;
 import com.winsigns.investment.investService.exception.InvestCommitFailedExcepiton;
 import com.winsigns.investment.investService.instruction.InstructionCheckManager;
 import com.winsigns.investment.investService.integration.FundServiceIntegration;
@@ -43,9 +46,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
-public class InstructionService {
-
-  final static String applyTopic = "resource-application";
+public class InstructionService implements KafkaTopics {
 
   final static JsonDeserializer<Boolean> keyDeserializer =
       new JsonDeserializer<Boolean>(Boolean.class);
@@ -262,7 +263,7 @@ public class InstructionService {
    * 
    * @param record
    */
-  @KafkaListener(topics = {applyTopic})
+  @KafkaListener(topics = {TOPIC_RESOURCE_APPLICATION})
   public void responseResourceApplication(ConsumerRecord<String, String> record) {
     log.info(record.key());
     log.info(record.value());
@@ -283,4 +284,82 @@ public class InstructionService {
       instructionRepository.save(thisInstruction);
     }
   }
+
+  /**
+   * 投资经理获取指令列表
+   * 
+   * @param investManagerId
+   * @param traderId
+   * @param beginDate
+   * @param endDate
+   * @return
+   */
+  public List<Instruction> getInstructionsByInvestManager(Long investManagerId, Date beginDate,
+      Date endDate) {
+
+    if (beginDate == null) {
+      beginDate = new Date();
+    }
+    if (endDate == null) {
+      endDate = new Date();
+    }
+
+    return instructionRepository
+        .findByInvestManagerIdAndCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(
+            investManagerId, beginDate, endDate, InstructionStatus.DELETED);
+  }
+
+  /**
+   * 交易员获取指令列表
+   * 
+   * @param traderId
+   * @param beginDate
+   * @param endDate
+   * @return
+   */
+  public List<Instruction> getInstructionsByTrader(Long traderId, Date beginDate, Date endDate) {
+
+    if (beginDate == null) {
+      beginDate = new Date();
+    }
+    if (endDate == null) {
+      endDate = new Date();
+    }
+    return instructionRepository
+        .findByTraderIdAndCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(
+            traderId, beginDate, endDate, InstructionStatus.DELETED);
+  }
+
+  /**
+   * 获取未分配指令列表
+   * 
+   * @return
+   */
+  public List<Instruction> getUnassignedInstructions() {
+    return instructionRepository
+        .findByTraderIdIsNullAndExecutionStatusAndInstructionBasketIsNullOrderByCreateTimeDesc(
+            InstructionStatus.ASSIGNING);
+  }
+
+  /**
+   * 更新交易员
+   * 
+   * @param command
+   * @return
+   */
+  public Instruction updateInstructionForTrader(UpdateInstructionTraderCommand command) {
+
+    Instruction thisInstruction = instructionRepository.findOne(command.getInstructionId());
+
+    if (thisInstruction == null) {
+      throw new InstructionInvalidException(new Object[] {command.getInstructionId()});
+    }
+
+    // TODO 检查指令状态的合法性
+    // TODO 校验交易员身份的合法性
+    thisInstruction.setTraderId(command.getTraderId());
+
+    return instructionRepository.save(thisInstruction);
+  }
+
 }
