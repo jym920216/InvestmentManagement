@@ -9,7 +9,6 @@ public class PriorityAllocationStrategy extends AllocationStrategy {
 
   @Override
   public Long allot(Instruction instruction) {
-    return null;
-
+    return 123456L;
   }
 }
