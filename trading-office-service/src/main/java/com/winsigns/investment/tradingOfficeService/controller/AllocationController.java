@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.winsigns.investment.tradingOfficeService.command.AllotInstructionCommand;
 import com.winsigns.investment.tradingOfficeService.service.AllocationService;
 
 @RestController
@@ -16,7 +17,9 @@ public class AllocationController {
   AllocationService allocationService;
 
   @GetMapping
-  public ResponseEntity<?> getOperatorSequence() {
+  public ResponseEntity<?> allotInstruction(AllotInstructionCommand command) {
+
+    allocationService.assign(command);
 
     return null;
     // return new ResponseEntity<Object>(sequence, responseHeaders, HttpStatus.OK);

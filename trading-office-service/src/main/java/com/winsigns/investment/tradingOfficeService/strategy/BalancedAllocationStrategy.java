@@ -2,6 +2,8 @@ package com.winsigns.investment.tradingOfficeService.strategy;
 
 import org.springframework.stereotype.Component;
 
+import com.winsigns.investment.tradingOfficeService.model.Instruction;
+
 /**
  * 均衡分配策略
  * 
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class BalancedAllocationStrategy extends AllocationStrategy {
 
   @Override
-  public void assign() {
-
+  public Long allot(Instruction instruction) {
+    return 123456L;
   }
 }

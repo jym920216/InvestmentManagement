@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.winsigns.investment.framework.hal.HALResponse;
 import com.winsigns.investment.tradingOfficeService.resource.CurrentStrategyResource;
+import com.winsigns.investment.tradingOfficeService.resource.TraderResource;
 
 
 /**
@@ -27,6 +28,7 @@ public class RootController {
     HALResponse<String> halResponse = new HALResponse<String>("");
 
     halResponse.addCollectionLink(StrategyController.class, CurrentStrategyResource.class);
+    halResponse.addCollectionLink(TraderController.class, TraderResource.class);
 
     return new ResponseEntity<>(halResponse, HttpStatus.OK);
   }
