@@ -1,13 +1,11 @@
 package com.winsigns.investment.generalService.resource;
 
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.hateoas.core.Relation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.winsigns.investment.framework.hal.ResourceSupport;
 
 import lombok.Getter;
@@ -15,14 +13,12 @@ import lombok.Getter;
 @Relation(value = "date", collectionRelation = "dates")
 public class DateResource extends ResourceSupport {
 
-  @JsonIgnore
-  private static final DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-
   @Getter
-  private final String date;
+  @JsonFormat(timezone = "GMT+8", pattern = "yyyyMMdd")
+  private final Date date;
 
   public DateResource(Date date) {
-    this.date = dateFormat.format(date);
+    this.date = date;
   }
 
 }
