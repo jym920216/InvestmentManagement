@@ -201,11 +201,9 @@ public class InstructionService implements KafkaTopics {
           .findByInvestManagerIdAndCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(
               investManagerId, beginDate, endDate, InstructionStatus.DELETED);
     } else if (traderId != null) {
-      {
-        return instructionRepository
-            .findByTraderIdAndCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(
-                traderId, beginDate, endDate, InstructionStatus.DELETED);
-      }
+      return instructionRepository
+          .findByTraderIdAndCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(
+              traderId, beginDate, endDate, InstructionStatus.DELETED);
     } else {
       return instructionRepository
           .findByCreateDateBetweenAndExecutionStatusNotAndInstructionBasketIsNullOrderByCreateTimeDesc(

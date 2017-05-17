@@ -58,10 +58,18 @@ public class InstructionController {
     Link link = linkTo(InstructionController.class).withSelfRel();
     Link deleteLink =
         linkTo(methodOn((InstructionController.class)).deleteInstructions(null)).withRel("deletes");
+    Link investmanagerLink = linkTo(methodOn((InstructionController.class))
+        .getInstructionsByInvestManager(investManagerId, beginDate, endDate))
+            .withRel("by-investmanager");
+    Link traderLink = linkTo(methodOn((InstructionController.class))
+        .getInstructionsByTrader(traderId, beginDate, endDate)).withRel("by-trader");
+    Link unassignLink = linkTo(methodOn((InstructionController.class)).getUnassignedInstructions())
+        .withRel("by-unassign");
     Collection<Instruction> instructions = instructionService
         .findNormalInstructionByCondition(investManagerId, traderId, beginDate, endDate);
     return new Resources<InstructionResource>(
-        new InstructionResourceAssembler().toResources(instructions), link, deleteLink);
+        new InstructionResourceAssembler().toResources(instructions), link, deleteLink,
+        investmanagerLink, traderLink, unassignLink);
   }
 
   /**

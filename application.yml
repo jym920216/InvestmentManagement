@@ -54,3 +54,13 @@ services:
       - 10014:10014
     environment:
       SPRING_PROFILES_ACTIVE: dev
+  
+  trading-office-service:
+    build: trading-office-service
+    command: /bin/bash -c "wait-for-it -t 0 localhost:6379 && /app/start /app/trading-office-service-latest.jar"
+    network_mode: "host"
+    ports:
+      - 10015:10015
+    environment:
+      SPRING_PROFILES_ACTIVE: dev    
+      

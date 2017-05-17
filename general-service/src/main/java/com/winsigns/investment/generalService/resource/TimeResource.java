@@ -14,7 +14,7 @@ import lombok.Getter;
 public class TimeResource extends ResourceSupport {
 
   @Getter
-  @JsonFormat(timezone = "GMT+8", pattern = "yyyyMMdd HH:mm:ss.sss")
+  @JsonFormat(timezone = "GMT+8", pattern = "yyyyMMdd HH:mm:ss.SSS")
   private final Date time;
 
   public TimeResource(Date time) {

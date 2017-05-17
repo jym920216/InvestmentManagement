@@ -1,6 +1,6 @@
 package com.winsigns.investment.framework.measure.kafkaStreams;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,22 +14,36 @@ import lombok.Setter;
  * @since 0.0.2
  *
  */
+@ConfigurationProperties(prefix = "kafka")
 public class KafkaStreamsConfiguration {
 
-  @Value("${kafka.stream.appid}")
   @Getter
-  @Setter
-  String appId;
+  private final Stream stream = new Stream();
 
-  @Value("${kafka.broker.host}")
   @Getter
-  @Setter
-  String brokerHost;
+  private final Broker broker = new Broker();
 
-  @Value("${kafka.zookeeper.host}")
   @Getter
-  @Setter
-  String zookeeperHost;
+  private final Zookeeper zookeeper = new Zookeeper();
+
+  public static class Stream {
+    @Getter
+    @Setter
+    String appid;
+  }
+
+  public static class Broker {
+    @Getter
+    @Setter
+    String host;
+  }
+
+  public static class Zookeeper {
+    @Getter
+    @Setter
+    String host;
+  }
+
 
   /**
    * 

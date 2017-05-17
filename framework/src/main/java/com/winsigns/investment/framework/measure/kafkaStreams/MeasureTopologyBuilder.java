@@ -73,10 +73,12 @@ public class MeasureTopologyBuilder implements SmartInitializingSingleton {
     valueSerde = new ProcessorValueJsonSerde();
 
     Properties config = new Properties();
-    config.put(StreamsConfig.APPLICATION_ID_CONFIG, kafkaStreamsConfiguration.getAppId());
-    config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaStreamsConfiguration.getBrokerHost());
+    config.put(StreamsConfig.APPLICATION_ID_CONFIG,
+        kafkaStreamsConfiguration.getStream().getAppid());
+    config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG,
+        kafkaStreamsConfiguration.getBroker().getHost());
     config.put(StreamsConfig.ZOOKEEPER_CONNECT_CONFIG,
-        kafkaStreamsConfiguration.getZookeeperHost());
+        kafkaStreamsConfiguration.getZookeeper().getHost());
     config.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG, keySerde.getClass().getName());
     config.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, valueSerde.getClass().getName());
 
@@ -137,11 +139,11 @@ public class MeasureTopologyBuilder implements SmartInitializingSingleton {
     streams = new KafkaStreams(builder, config);
 
     // 防止没有任何指标的时候，启动
-    if (!builder.sourceTopics(kafkaStreamsConfiguration.getAppId()).isEmpty()) {
+    if (!builder.sourceTopics(kafkaStreamsConfiguration.getStream().getAppid()).isEmpty()) {
 
       // TODO 这里要先检查kafka的主题是否存在，不然会启动失败
       // 先往各个topic中发送一条消息，创建主题
-      for (String topic : builder.sourceTopics(kafkaStreamsConfiguration.getAppId())) {
+      for (String topic : builder.sourceTopics(kafkaStreamsConfiguration.getStream().getAppid())) {
         kafkaTemplate.send(topic, new ProcessorKey(null, ProcessorKey.INIT), new ProcessorValue());
       }
       streams.start();
